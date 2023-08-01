@@ -50,9 +50,20 @@
 #define PREFETCH(x, ...)
 #endif
 
+#if defined(_STD_GCC) || defined(_STD_CLANG)
+#define UNREACHABLE __builtin_unreachable()
+#else
+#defined UNREACHABLE
+#endif
+
 /* Array Size */
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __is_array(arr))
 #define __is_array(a) BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
 #define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
+
+#define KILOBYTE(x) ((x) / 1024)
+#define MEGABYTE(x) ((x) / (1024 * 1024))
+#define GIGABYTE(x) ((x) / (1024 * 1024 * 1024))
+#define TERABYTE(x) ((x) / (1024 * 1024 * 1024 * 1024))
 
 #endif
