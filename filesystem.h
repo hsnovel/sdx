@@ -1,6 +1,8 @@
 #ifndef FILESYSTEM_H
 #define FILESYSTEM_H
 
+#include "extra.h"
+
 #ifdef _STD_UNIX
 #include <sys/stat.h>
 #include <sys/statvfs.h>
