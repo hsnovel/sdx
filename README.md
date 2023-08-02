@@ -16,3 +16,4 @@ library    | lastest version | category | LoC | description
 **[log.h](log.h)** | 0.01 | utility | 304 | thread safe logging library
 **[string_view.h](string_view.h)** | 0.01 | utility | 243 | string view implementation for c
 **[extra.h](extra.h)** | 0.01 | utility | 69 | extra utility library, includes compiler spesific macros.
+**[file_format.h](file_format.h)** | 0.01 | utility | 722 | library for parsing file types, pe32, elf etc..
