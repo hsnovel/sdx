@@ -10,7 +10,9 @@ int sys_is_debugger_attached(void);
 int sys_restart(void);
 int sys_poweroff(void);
 int sys_get_memory_info(xmemory_info *info);
-int fs_get_memory_info(sys_meminfo *info);
+int sys_get_memory_info(sys_meminfo *info);
+int sys_get_num_cpu_core(void);
+int sys_get_num_cpu_core_avail(void);
 
 #endif
 
@@ -98,7 +100,7 @@ int sys_poweroff(void)
  * @param {sys_meminfo}: Pointer to a struct which will receive capacity and avaliable ram in bytes
  * @return {int}: On succeed 1 is returned, otherwise 0 is returned and errno is set.
  */
-int fs_get_memory_info(sys_meminfo *info)
+int sys_get_memory_info(sys_meminfo *info)
 {
 #if defined _STD_UNIX
 	long phpages = get_phys_pages();
@@ -127,6 +129,40 @@ int fs_get_memory_info(sys_meminfo *info)
 	info->capacity = (size_t)memorystat.ullTotalPhys;
 	info->available = (size_t)memorystat.ullAvailPhys;
 	return 1;
+#endif
+}
+
+/**
+ * Get number of CPU cores configured by the operating system
+ */
+int sys_get_num_cpu_core(void)
+{
+#ifdef _STD_UNIX
+	return get_nprocs_conf();
+#elif defined _STD_WINDOWS
+	SYSTEM_INFO sysinfo;
+	GetSystemInfo(&sysinfo);
+	return sysinfo.dwNumberOfProcessors;
+#endif
+}
+
+/**
+ * TODO: I currently could not find the windows version of
+ * get_nprocs in winapi, they seem to be the same call
+ */
+
+/**
+ * Get number of CPU cores configured by the operating system NOT
+ * including offline cores
+ */
+int sys_get_num_cpu_core_avail(void)
+{
+#ifdef _STD_UNIX
+	return get_nprocs();
+#elif defined _STD_WINDOWS
+	SYSTEM_INFO sysinfo;
+	GetSystemInfo(&sysinfo);
+	return sysinfo.dwNumberOfProcessors;
 #endif
 }
 
