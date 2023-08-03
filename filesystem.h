@@ -174,6 +174,7 @@ int fs_copy_file(char* source, char* dest)
 		goto error;
 	if (splice(srcf, NULL, destf, NULL, st.st_size, 0) == -1)
 		goto error;
+	return 1;
  error:
 	close(srcf);
 	close(destf);
