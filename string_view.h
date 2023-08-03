@@ -27,6 +27,7 @@ SV_DEF string_view sv_trim_right(string_view sv);
 SV_DEF string_view sv_trim(string_view sv);
 SV_DEF string_view sv_trim_by_delim(string_view *sv, char delim); /* Use delim as sepeartor, advance until delim is hit and return trimmed part */
 SV_DEF string_view sv_trim_by_sv(string_view *sv, string_view delim); /* Return trimemd part, advance pointer to last index */
+SV_DEF string_view sv_next_line(string_view sv);
 
 #define SV_Fmt "%.*s"
 #define SV_Arg(sv) (int) (sv).len, (sv).data
@@ -238,6 +239,24 @@ SV_DEF string_view sv_trim_right(string_view sv)
 SV_DEF string_view sv_trim(string_view sv)
 {
 	return sv_trim_right(sv_trim_left(sv));
+}
+
+SV_DEF string_view sv_next_line(string_view sv)
+{
+	string_view result;
+	result.data = sv.data;
+	result.len = sv.len;
+	while (*result.data != '\n') {
+		result.data++;
+		result.len--;
+	}
+	result.data++;
+	result.len--;
+
+	if (result.len <= 0)
+		return sv;
+
+	return result;
 }
 
 #endif
