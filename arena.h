@@ -75,6 +75,7 @@ void arena_flush_buffer()
 
 }
 
+// @Todo: Add alignement for the next pushed memory
 void * _arena_push_size(arena *ar, size_t size)
 {
 	// Grow the arena memory if not enough space
