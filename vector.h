@@ -62,6 +62,11 @@ int vector_push(vector *vector, void *data)
 	return 1;
 }
 
+void vector_replace_item(vector *vector, size_t index, void *data)
+{
+	memcpy(vector->data + (index * vector->itemsize), data, vector->itemsize);
+}
+
 void *vector_get(vector *vector, int index)
 {
 	assert((size_t)vector->index >= (size_t)index);
