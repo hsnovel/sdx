@@ -18,12 +18,21 @@
 #include <windows.h>
 #endif
 
+#include <stdlib.h>
+
 typedef struct {
 	size_t capacity;
 	size_t free;
 	size_t available;
 } fs_space_info;
 
+typedef struct entire_file
+{
+	void *contents;
+	size_t size;
+} fs_file;
+
+fs_file fs_read_file(char *path);
 int fs_space(char *path, fs_space_info *space);
 int fs_create_directory(char *path);
 int fs_create_file(char *path);
@@ -35,6 +44,35 @@ int fs_move_file(char* source, char* dest);
 #endif
 
 #ifdef FILESYSTEM_IMPLEMENTATION
+
+fs_file fs_read_file(char *path)
+{
+	fs_file result = {0};
+
+	FILE *file = fopen(path, "rb");
+	if(!file) {
+		result.contents = 0;
+		result.size = 0;
+		return result;
+	}
+
+	fseek(file, 0, SEEK_END);
+	result.size = ftell(file);
+	fseek(file, 0, SEEK_SET);
+
+	result.contents = malloc(result.size);
+	if(result.contents && result.size) {
+		fread(result.contents, result.size, 1, file);
+	}
+	else {
+		result.contents = 0;
+		result.size = 0;
+	}
+
+	fclose(file);
+
+	return result;
+}
 
 int fs_space(char *path, fs_space_info *space)
 {
