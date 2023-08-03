@@ -48,7 +48,7 @@ int arena_init(arena *ar)
 	ar->cap = ARENA_DEFAULT_BUFFER_CAP;
 
 	if ((ar->data = malloc(ar->cap)) == NULL) return 0;
-	if (!vector_init(&ar->backtrack, sizeof(backtrack_info))) {
+	if ((vector_init(&ar->backtrack, sizeof(backtrack_info))) == 0) {
 		free(ar->data);
 		return 0;
 	}
