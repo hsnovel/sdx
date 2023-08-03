@@ -39,6 +39,7 @@ int vector_init(vector *vector, int size)
 	vector->data = malloc(VECTOR_INITIAL_CAP);
 	if (vector->data == NULL)
 		return 0;
+	return 1;
 }
 
 int vector_push(vector *vector, void *data)
@@ -58,11 +59,11 @@ int vector_push(vector *vector, void *data)
 
 void *vector_get(vector *vector, int index)
 {
-	assert(vector->index >= index);
+	assert((size_t)vector->index >= (size_t)index);
 	return vector->data + (index * vector->itemsize);
 }
 
-int vector_free_item(vector *vector, int index)
+void vector_free_item(vector *vector, int index)
 {
 	memset(vector->data + (index * vector->itemsize), 0, vector->itemsize);
 }
