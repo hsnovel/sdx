@@ -67,6 +67,9 @@ void vector_replace_item(vector *vector, size_t index, void *data)
 	memcpy(vector->data + (index * vector->itemsize), data, vector->itemsize);
 }
 
+// @Todo: store a vector of deleted items, when vector_get
+// is called, check if deleted items vector has that index
+// if so retur NULL otherwise proceed normally
 void *vector_get(vector *vector, int index)
 {
 	assert((size_t)vector->index >= (size_t)index);
