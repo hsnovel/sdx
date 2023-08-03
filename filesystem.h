@@ -166,7 +166,7 @@ int fs_copy_file(char* source, char* dest)
 #if defined _STD_WINDOWS
 	BOOL result = CopyFile(source, dest, FALSE);
 	return !!result;
-#elif defined _STD_LINUX
+#elif defined(_STD_LINUX) || defined(_STD_FREEBSD)
 	int srcf = open(source, S_IRUSR, S_IWUSR);
 	int destf = open(dest, S_IRUSR, S_IWUSR);
 	struct stat st;

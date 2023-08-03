@@ -14,6 +14,10 @@
 #define _STD_LINUX
 #endif
 
+#if defined (__FreeBSD__)
+#define _STD_FREEBSD
+#endif
+
 #if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__bsdi__) || defined(__DragonFly__)
 #define _STD_BSD
 #endif
