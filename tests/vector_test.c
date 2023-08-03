@@ -16,7 +16,7 @@ int main()
 	assert(*((int*)vector_get(&vec, 99999)) == 99999 && "Assertion failed checking index 99999");
 
 	vector_free_item(&vec, 20);
-	assert(*((int*)vector_get(&vec, 20)) == 0 && "Assertion failed checkig index 20");
+	assert(((int*)vector_get(&vec, 20)) == NULL && "Assertion failed checkig index 20");
 
 	int newdata = 12;
 	vector_replace_item(&vec, 25, &newdata);
