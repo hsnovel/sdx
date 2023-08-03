@@ -18,3 +18,10 @@ library    | lastest version | category | doc | description
 **[extra.h](extra.h)** | 0.01 | utility | null | extra utility library, includes compiler spesific macros.
 **[file_format.h](file_format.h)** | 0.01 | utility | null | library for parsing file types, pe32, elf etc..
 **[types.h](types.h)** | 0.01 | utility | null | better names for types than posix_t
+
+## Coding style
+std follows [linux kernel coding style](https://www.kernel.org/doc/html/v4.10/process/coding-style.html) except couple of things.
+* Typedef structs, for the reason that they should be "opaque" to the user. Messing with indexes or data by hand might break
+the library. And typing struct in front of something like vector gives the programmer the feeling that they can mess with
+the internal data, which can crash the program.
+* Comments can also be //. This library is C99 compatible so there should be no problem with that comment style.
