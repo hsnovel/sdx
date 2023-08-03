@@ -44,14 +44,12 @@ void _arena_get();
 int arena_init(arena *ar)
 {
 	ar->used = 0;
-	ar->buf_used = 0;
 	ar->flags = 0;
 	ar->cap = ARENA_DEFAULT_BUFFER_CAP;
 
 	if ((ar->data = malloc(ar->cap)) == NULL) return 0;
 	if (!vector_init(&ar->backtrack, sizeof(backtrack_info))) {
 		free(ar->data);
-		free(ar->buf);
 		return 0;
 	}
 
