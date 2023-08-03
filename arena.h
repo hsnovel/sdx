@@ -117,7 +117,9 @@ void * _arena_push_size(arena *ar, size_t size)
 		size_t best_fit_index = 0;
 		do {
 			backtrack_info *current = vector_get(&ar->backtrack, i);
-			if (current->size < size) {
+			// Check if size is sufficent enough to hold it or
+			// vector we got is not deleted
+			if ((current->size < size) || (current->size == 0)) {
 				i++;
 				continue;
 			}
@@ -137,19 +139,27 @@ void * _arena_push_size(arena *ar, size_t size)
 		// Good fit is found, check memory left over
 		// and replace the current current best fit
 		// with the space left over
-	}
+		size_t space_leftover = best_fit.size - size;
 
-	/*
-	 * if (ar->flags == 1) {
-	 * 	for (size_t i = 0; i < ar->backtrack.index; i++) {
-	 * 		backtrack_info *info = vector_get(&ar->backtrack, i);
-	 * 		if (size < info->size) {
-	 * 			if (info->size < best_fit->size)
-	 * 				best_fit = info;
-	 * 		}
-	 * 	}
-	 * }
-	 */
+		// If it fits perfectly then do not replace it
+		// instead delete the entry and return the space
+		if (space_leftover == 0) {
+			vector_free_item(&ar->backtrack, best_fit_index);
+			return best_fit.start;
+		}
+
+		// If there is a space left, replace the
+		// current fragmentation with the new one
+		// that points to the beggining of the new
+		// fragmentation part
+		backtrack_info fragmented_part = {
+			.start = (unsigned char*)best_fit.start + size,
+			.size = space_leftover,
+		};
+
+		vector_replace_item(&ar->backtrack, best_fit_index, &fragmented_part);
+		return best_fit.start;
+	}
 
 	return NULL;
 }
