@@ -3,12 +3,17 @@
 
 #include "extra.h"
 
+#ifdef _STD_LINUX
+#define _GNU_SOURCE
+#endif
+
 #ifdef _STD_UNIX
 #include <sys/stat.h>
 #include <sys/statvfs.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <stdio.h>
 #elif defined _STD_WINDOWS
 #include <windows.h>
 #endif
@@ -161,8 +166,19 @@ int fs_copy_file(char* source, char* dest)
 #if defined _STD_WINDOWS
 	BOOL result = CopyFile(source, dest, FALSE);
 	return !!result;
+#elif defined _STD_LINUX
+	int srcf = open(source, S_IRUSR, S_IWUSR);
+	int destf = open(dest, S_IRUSR, S_IWUSR);
+	struct stat st;
+	if (fstat(srcf, &st))
+		goto error;
+	if (splice(srcf, NULL, destf, NULL, st.st_size, 0) == -1)
+		goto error;
+ error:
+	close(srcf);
+	close(destf);
+	return 0;
 #elif defined _STD_UNIX
-
 #endif
 }
 
