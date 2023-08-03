@@ -13,21 +13,22 @@
 #include "vector.h"
 
 typedef struct {
-	unsigned char *data;
-	unsigned char *buf;
-	vector backtrack;
-	size_t cap;
-	size_t used;
-	size_t buf_cap;
-	size_t buf_used;
-	int flags;
+	unsigned char *data;	// actual arena memory
+	unsigned char *buf;	// temporary buffer, data gets stored here temporarily before flushing
+	vector backtrack;	// vector of backtrack_info, stores fragmented parts
+	size_t cap;		// capacity of data*
+	size_t used;		// used part of data*
+	size_t buf_cap;	// capacity of buf*
+	size_t buf_used;	// used part of *buf
+	int flags;		// user defined flags
 } arena;
 
 typedef struct {
-	void *start;
-	size_t size;
+	void *start;		// starting address of the fragmented part
+	size_t size;		// size of the fragmented part in bytes
 } backtrack_info;
 
+// This will be converted to a bitmask later
 enum {
 	ARENA_NOBUFFERING = 1,
 };
@@ -167,9 +168,11 @@ void * _arena_push_size(arena *ar, size_t size)
 
 void _arena_free(arena *ar, void *ptr, size_t size)
 {
-	backtrack_info info = { .start = ptr,
-				.size = size };
+	// Add fragmentation entry to backtrack vector
+	backtrack_info info = { .start = ptr, .size = size };
 	vector_push(&ar->backtrack, &info);
+
+	// clear the memory
 	memset(ptr, 0, size);
 }
 
