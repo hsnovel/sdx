@@ -45,11 +45,15 @@ int vector_init(vector *vector, int size)
 int vector_push(vector *vector, void *data)
 {
 	if (vector->cap <= (vector->index * vector->itemsize) + vector->itemsize) {
-		unsigned char *tmp = malloc(vector->cap * 2);
-		vector->cap = vector->cap * 2;
-		if (tmp == NULL)
-			return 0;
-		memcpy(tmp, vector->data, vector->index * vector->itemsize);
+		size_t newcap = vector->cap * 2;
+		unsigned char *tmp = realloc(vector->data, newcap);
+		if (tmp == NULL) {
+			tmp = malloc(vector->cap * 2);
+			if (tmp == NULL)
+				return 0;
+			memcpy(tmp, vector->data, vector->index * vector->itemsize);
+		}
+		vector->cap = newcap;
 		vector->data = tmp;
 	}
 	memcpy(vector->data + (vector->index * vector->itemsize), data, vector->itemsize);
