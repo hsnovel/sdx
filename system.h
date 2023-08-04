@@ -1,6 +1,19 @@
 #ifndef SYSTEM_H
 #define SYSTEM_H
 
+#include "extra.h"
+#include <string.h>
+#include <ctype.h>
+#ifdef _STD_WINDOWS
+#include <windows.h>
+#elif defined(_STD_UNIX)
+#include <stddef.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/sysinfo.h>
+#include <sys/reboot.h>
+#endif
+
 typedef struct {
 	size_t capacity;
 	size_t available;
@@ -9,7 +22,7 @@ typedef struct {
 int sys_is_debugger_attached(void);
 int sys_restart(void);
 int sys_poweroff(void);
-int sys_get_memory_info(xmemory_info *info);
+int sys_get_memory_info(sys_meminfo *info);
 int sys_get_memory_info(sys_meminfo *info);
 int sys_get_num_cpu_core(void);
 int sys_get_num_cpu_core_avail(void);
@@ -32,7 +45,7 @@ int sys_is_debugger_attached(void)
 	if (status_fd == -1)
 		return 0;
 
-	const ssize_t num_read = read(status_fd, buf, sizeof(buf) - 1);
+	const size_t num_read = read(status_fd, buf, sizeof(buf) - 1);
 	close(status_fd);
 
 	if (num_read <= 0)
@@ -54,7 +67,6 @@ int sys_is_debugger_attached(void)
 	return 0;
 #elif defined _STD_WINDOWS
 	return IsDebuggerPresent();
-
 #endif
 }
 
@@ -67,7 +79,7 @@ int sys_restart(void)
 	if (reboot(RB_AUTOBOOT) == -0)
 		return 1;
 	else
-		return _STD_get_last_error();
+		return 0;
 #elif defined _STD_WINDOWS
 
 	BOOL result = ExitWindowsEx(EWX_REBOOT,  SHTDN_REASON_MINOR_OTHER);
@@ -84,10 +96,7 @@ int sys_restart(void)
 int sys_poweroff(void)
 {
 #if defined _STD_UNIX
-	if(reboot(RB_POWER_OFF) == 0)
-		return 1;
-	else
-		return _STD_get_last_error();
+	return reboot(RB_POWER_OFF);
 #elif defined _STD_WINDOWS
 	BOOL result = ExitWindowsEx(EWX_SHUTDOWN, SHTDN_REASON_MINOR_OTHER);
 	return !!result;
@@ -130,6 +139,8 @@ int sys_get_memory_info(sys_meminfo *info)
 	info->available = (size_t)memorystat.ullAvailPhys;
 	return 1;
 #endif
+	return -1;
+	(void)info;
 }
 
 /**
