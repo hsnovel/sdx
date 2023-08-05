@@ -22,6 +22,13 @@ typedef struct {
 	int l;
 } teststr;
 
+typedef struct {
+	teststr a;
+	teststr b;
+	teststr c;
+	teststr d;
+} bigstr;
+
 int main()
 {
 	arena ar;
@@ -29,22 +36,24 @@ int main()
 		printf("Unable to init arena\n");
 	}
 
-	int *data = arena_alloc(&ar, sizeof(int));
-	*data = 10;
-	printf("%d\n", *data);
-	teststr *strc = arena_alloc(&ar, sizeof(teststr));
+	bigstr *data = arena_alloc(&ar, sizeof(bigstr));
+	bigstr *strc = arena_alloc(&ar, sizeof(bigstr));
 	if (strc == NULL) {
 		printf("Exiting");
 		exit(1);
 	}
-	strc->a = 10;
-	strc->b = 20;
-	strc->c = 30;
 
-	printf("%d, %d, %d\n", strc->a, strc->b, strc->c);
-
-	for (int i = 0; i < 100000; i++) {
-		arena_alloc(&ar, sizeof(int));
+	for (int i = 0; i < 10000; i++) {
+		arena_free_type(&ar, data);
+		arena_free_type(&ar, strc);
+		data = arena_alloc(&ar, sizeof(bigstr));
+		strc = arena_alloc(&ar, sizeof(bigstr));
 	}
+
+	/*
+	 * for (int i = 0; i < 100000; i++) {
+	 * 	arena_alloc(&ar, sizeof(int));
+	 * }
+	 */
 
 }
