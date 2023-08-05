@@ -53,10 +53,10 @@ typedef struct {
 
 int arena_init(arena *ar);
 void * _arena_push_size(arena *ar, size_t size);
-void _arena_free(arena *ar, void *ptr, size_t size);
+void arena_free(arena *ar, void *ptr, size_t size);
 void _arena_get();
 
-#define arena_free(arena, ptr) _arena_free(arena, ptr, sizeof(*ptr))
+#define arena_free_type(arena, ptr) arena_free(arena, ptr, sizeof(*ptr))
 #define arena_alloc(arena, size) _arena_push_size(arena, size);
 
 #endif
@@ -169,7 +169,7 @@ void * _arena_push_size(arena *ar, size_t size)
 	return best_fit.start;
 }
 
-void _arena_free(arena *ar, void *ptr, size_t size)
+void arena_free(arena *ar, void *ptr, size_t size)
 {
 	// Add fragmentation entry to backtrack vector
 	backtrack_info info = { .start = ptr, .size = size };
