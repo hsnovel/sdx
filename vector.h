@@ -25,6 +25,12 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+//----------------------------------------------------------------------
+//    PLEASE DO NOT USE THIS LIBRARY, IT IS CURRENTLY EXPERIMENTAL
+//----------------------------------------------------------------------
+//   HEAVILY RECCOMENDED TO NOT USE IT, IT IS CURRENTLY FULL OF BUGS
+//----------------------------------------------------------------------
+
 /*
  * on fail 0 is returned, otherwise
  * 1 is returned.
@@ -68,13 +74,15 @@ int vector_init(vector *vector, int size)
 	vector->deleted_item_cap = VECTOR_INITIAL_DELETED_ITEM_CAP;
 	if ((vector->data = malloc(VECTOR_INITIAL_CAP)) == NULL)
 		return 0;
-	if ((vector->deleted_items = malloc(VECTOR_INITIAL_DELETED_ITEM_CAP * sizeof(int))) == NULL) {
-		free(vector->data);
-		return 0;
-	}
-
-	for (int i = 0; i < vector->deleted_item_cap; i++)
-		vector->deleted_items[i] = -1;
+	/*
+	 * if ((vector->deleted_items = malloc(VECTOR_INITIAL_DELETED_ITEM_CAP * sizeof(int))) == NULL) {
+	 * 	free(vector->data);
+	 * 	return 0;
+	 * }
+	 *
+	 * for (int i = 0; i < vector->deleted_item_cap; i++)
+	 * 	vector->deleted_items[i] = -1;
+	 */
 
 	return 1;
 }
@@ -116,10 +124,12 @@ void vector_replace_item(vector *vector, size_t index, void *data)
 void *vector_get(vector *vector, size_t index)
 {
 	assert((size_t)vector->index >= (size_t)index);
-	for (int i = 0; i < vector->deleted_item_cap; i++) {
-		if (index == (size_t)vector->deleted_items[i])
-			return NULL;
-	}
+	/*
+	 * for (int i = 0; i < vector->deleted_item_cap; i++) {
+	 * 	if (index == (size_t)vector->deleted_items[i])
+	 * 		return NULL;
+	 * }
+	 */
 	return vector->data + (index * vector->itemsize);
 }
 
@@ -127,27 +137,33 @@ void *vector_get(vector *vector, size_t index)
 int vector_free_item(vector *vector, size_t index)
 {
 	// Clear deleted items
-	for (int i = 0; i < vector->deleted_item_cap; i++)
-		vector->deleted_items[i] = -1;
+	/*
+	 * for (size_t i = 0; i < vector->itemsize / sizeof(int); i++)
+	 * 	vector->deleted_items[i] = -1;
+	 */
 
 	// Check deleted item array to see if there is enough space
-	if (vector->deleted_item_cap < vector->deleted_item_index) {
-		size_t newcap = vector->deleted_item_cap * 2 * sizeof(int);
-		unsigned char *tmp = realloc(vector->data, newcap);
-		if (tmp == NULL) {
-			tmp = malloc(newcap);
-			if (tmp == NULL)
-				return 0;
-			memcpy(tmp, vector->deleted_items, vector->deleted_item_index * sizeof(int));
-			free(vector->deleted_items);
-		}
-		vector->cap = newcap;
-		vector->data = tmp;
-	}
+	/*
+	 * if (vector->deleted_item_cap < vector->deleted_item_index) {
+	 * 	size_t newcap = vector->deleted_item_cap * 2 * sizeof(int);
+	 * 	unsigned char *tmp = realloc(vector->data, newcap);
+	 * 	if (tmp == NULL) {
+	 * 		tmp = malloc(newcap);
+	 * 		if (tmp == NULL)
+	 * 			return 0;
+	 * 		memcpy(tmp, vector->deleted_items, vector->deleted_item_index * sizeof(int));
+	 * 		free(vector->deleted_items);
+	 * 	}
+	 * 	vector->cap = newcap;
+	 * 	vector->data = tmp;
+	 * }
+	 */
 
 	// Add the index to the deleted items vector
-	vector->deleted_items[vector->deleted_item_index] = index;
-	vector->deleted_item_index++;
+	/*
+	 * vector->deleted_items[vector->deleted_item_index] = index;
+	 * vector->deleted_item_index++;
+	 */
 	return 1;
 }
 
