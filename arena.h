@@ -28,6 +28,8 @@
 //----------------------------------------------------------------------
 //    PLEASE DO NOT USE THIS LIBRARY, IT IS CURRENTLY EXPERIMENTAL
 //----------------------------------------------------------------------
+// THIS LIBRARY'S DEVELOPMENT IS STOPPED UNTILL I MAKE A HASHMAP LIBRARY
+//----------------------------------------------------------------------
 
 #include <stddef.h>
 #include <stdint.h>
