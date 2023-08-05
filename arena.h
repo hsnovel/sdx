@@ -33,6 +33,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <assert.h>
 #define VECTOR_IMPLEMENTATION
 #include "vector.h"
 
@@ -40,7 +41,8 @@ typedef struct {
 	unsigned char *data;	// actual arena memory
 	vector backtrack;	// vector of backtrack_info, stores fragmented parts
 	size_t cap;		// capacity of data*
-	size_t used;		// used part of data*
+	size_t stack_pointer;	// stack_pointer part of data*
+	size_t used;
 	int flags;		// user defined flags
 } arena;
 
@@ -55,20 +57,20 @@ void _arena_free(arena *ar, void *ptr, size_t size);
 void _arena_get();
 
 #define arena_free(arena, ptr) _arena_free(arena, ptr, sizeof(*ptr))
-#define arena_push_size(arena, size) _arena_push_size(arena, size);
-#define arena_push_type(arena, type) (type*)_arena_push_size(arena, sizeof(type))
+#define arena_alloc(arena, size) _arena_push_size(arena, size);
 
 #endif
 
 #ifdef ARENA_IMPLEMENTATION
 
-#define ARENA_DEFAULT_DATA_CAP 4096
+#define ARENA_DEFAULT_DATA_CAP 256
 
 int arena_init(arena *ar)
 {
-	ar->used = 0;
+	ar->stack_pointer = 0;
 	ar->flags = 0;
 	ar->cap = ARENA_DEFAULT_DATA_CAP;
+	ar->used = 0;
 
 	if ((ar->data = malloc(ar->cap)) == NULL) return 0;
 	if ((vector_init(&ar->backtrack, sizeof(backtrack_info))) == 0) {
@@ -91,18 +93,21 @@ void * _arena_push_size(arena *ar, size_t size)
 			tmp = malloc(newcap);
 			if (tmp == NULL)
 				return 0;
-			memcpy(tmp, ar->data, ar->used);
+			memcpy(tmp, ar->data, ar->stack_pointer);
 			free(ar->data);
 		}
 		ar->cap = newcap;
 		ar->data = tmp;
+		printf("newcap: %ld\n", newcap);
 	}
+
+	ar->used += size;
 
 	// No previously freed memory is present
 	if (ar->backtrack.index == 0) {
-		size_t prev_used = ar->used;
-		ar->used += size;
-		return ar->data + prev_used;
+		size_t prev_stack_pointer = ar->stack_pointer;
+		ar->stack_pointer += size;
+		return ar->data + prev_stack_pointer;
 	}
 
 	// Freed memory is present, loop through backtrace
@@ -115,6 +120,7 @@ void * _arena_push_size(arena *ar, size_t size)
 	size_t best_fit_index = 0;
 	do {
 		backtrack_info *current = vector_get(&ar->backtrack, i);
+		assert(current != NULL && "vector_get returned NULL\n");
 		// Check if size is sufficent enough to hold it or
 		// vector we got is not deleted
 		if ((current->size < size) || (current->size == 0)) {
@@ -132,11 +138,11 @@ void * _arena_push_size(arena *ar, size_t size)
 	// Nowhere to fit the current allocation
 	// push it to the top
 	if (best_fit.start == NULL) {
-		size_t prev_used = ar->used;
-		ar->used += size;
-		return ar->data + prev_used;
+		size_t prev_stack_pointer = ar->stack_pointer;
+		ar->stack_pointer += size;
+		return ar->data + prev_stack_pointer;
 	}
-	ar->used += size;
+	ar->stack_pointer += size;
 
 	// Good fit is found, check memory left over
 	// and replace the current current best fit
@@ -168,6 +174,12 @@ void _arena_free(arena *ar, void *ptr, size_t size)
 	// Add fragmentation entry to backtrack vector
 	backtrack_info info = { .start = ptr, .size = size };
 	vector_push(&ar->backtrack, &info);
+	ar->used -= size;
+
+	// if we are deleting the last element, then
+	// update the stack pointer to point to that place
+	if (ptr == ar->data + ar->stack_pointer)
+		ar->stack_pointer -= size;
 
 	// clear the memory
 	memset(ptr, 0, size);
