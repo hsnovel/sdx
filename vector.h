@@ -69,15 +69,6 @@ int vector_init(vector *vector, int size)
 	vector->itemsize = size;
 	if ((vector->data = malloc(VECTOR_INITIAL_CAP)) == NULL)
 		return 0;
-	/*
-	 * if ((vector->deleted_items = malloc(VECTOR_INITIAL_DELETED_ITEM_CAP * sizeof(int))) == NULL) {
-	 * 	free(vector->data);
-	 * 	return 0;
-	 * }
-	 *
-	 * for (int i = 0; i < vector->deleted_item_cap; i++)
-	 * 	vector->deleted_items[i] = -1;
-	 */
 
 	return 1;
 }
