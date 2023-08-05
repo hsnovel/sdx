@@ -63,13 +63,12 @@ void _arena_get();
 #ifdef ARENA_IMPLEMENTATION
 
 #define ARENA_DEFAULT_DATA_CAP 4096
-#define ARENA_DEFAULT_BUFFER_CAP 1048
 
 int arena_init(arena *ar)
 {
 	ar->used = 0;
 	ar->flags = 0;
-	ar->cap = ARENA_DEFAULT_BUFFER_CAP;
+	ar->cap = ARENA_DEFAULT_DATA_CAP;
 
 	if ((ar->data = malloc(ar->cap)) == NULL) return 0;
 	if ((vector_init(&ar->backtrack, sizeof(backtrack_info))) == 0) {
@@ -100,8 +99,11 @@ void * _arena_push_size(arena *ar, size_t size)
 	}
 
 	// No previously freed memory is present
-	if (ar->backtrack.index == 0)
-		return ar->data + ar->used;
+	if (ar->backtrack.index == 0) {
+		size_t prev_used = ar->used;
+		ar->used += size;
+		return ar->data + prev_used;
+	}
 
 	// Freed memory is present, loop through backtrace
 
@@ -129,8 +131,12 @@ void * _arena_push_size(arena *ar, size_t size)
 
 	// Nowhere to fit the current allocation
 	// push it to the top
-	if (best_fit.start == NULL)
-		return ar->data + ar->used;
+	if (best_fit.start == NULL) {
+		size_t prev_used = ar->used;
+		ar->used += size;
+		return ar->data + prev_used;
+	}
+	ar->used += size;
 
 	// Good fit is found, check memory left over
 	// and replace the current current best fit
