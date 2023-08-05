@@ -18,6 +18,8 @@ library    | lastest version | category | doc | description
 **[extra.h](extra.h)** | 0.01 | utility | null | extra utility library, includes compiler spesific macros.
 **[file_format.h](file_format.h)** | 0.01 | utility | null | library for parsing file types, pe32, elf etc..
 **[types.h](types.h)** | 0.01 | utility | null | better names for types than posix_t
+**[arena.h](arena.h)** | 0.01 | utility | null | memory arena for c, experimental
+**[benchmark.h](benchmark.h)** | 0.01 | utility | null | benchmark library for c, experimental
 
 ## Coding style
 std follows [linux kernel coding style](https://www.kernel.org/doc/html/v4.10/process/coding-style.html) except couple of things.
