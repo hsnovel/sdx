@@ -40,14 +40,19 @@ static double bench_hundered_million_latency;
 
 void benchmark_init();
 
+		/*
+		 * if (sizeof( (char[]){#__VA_ARGS__} ) == 2){		\
+		 * 	iter_count = __VA_ARGS__;			\
+		 * 	goto skip_iter_count_calculation;		\
+		 * }							\
+		 */
+
+
+// Second parameter is the number of itterations if the user wants to hardcode it explicity.
 #define BENCHMARK(function, ...)					\
 	do {								\
 		hr_clock time;						\
 		unsigned long int iter_count;				\
-		if (sizeof( (char[]){#__VA_ARGS__} ) != 1){		\
-			iter_count = __VA_ARGS__;			\
-			goto skip_iter_count_calculation;		\
-		}							\
 		start_clock(&time);					\
 		for (int i = 0; i < benchmark_iter_start_count; i++) {	\
 			function;					\
@@ -55,7 +60,6 @@ void benchmark_init();
 		}							\
 		end_clock(&time);					\
 		iter_count = ((benchmark_iter_start_count * seconds_spend_on_each_function) / time.wt); \
-	skip_iter_count_calculation:					\
 		hr_clock delay = benchmark_get_iter_count_delay(iter_count); \
 		printf("-------------------------------------------\n"); \
 		printf("BENCHMARK: %s\n", #function);			\
@@ -65,7 +69,7 @@ void benchmark_init();
 			do_not_optimize_away(&i);			\
 		}							\
 		end_clock(&time);					\
-		printf("delay wt: %f\ndelay ct: %f\niteration: %lu\nwalltime: %f\ncputime: %f\n\n", delay.wt, delay.ct, iter_count, time.wt - delay.wt, time.ct - delay.ct); \
+		printf("iteration: %lu\nwalltime: %f\ncputime: %f\n\n", iter_count, time.wt - delay.wt, time.ct - delay.ct); \
 	} while(0);							\
 
 #endif
