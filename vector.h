@@ -137,10 +137,8 @@ void *vector_get(vector *vector, size_t index)
 int vector_free_item(vector *vector, size_t index)
 {
 	// Clear deleted items
-	/*
-	 * for (size_t i = 0; i < vector->itemsize / sizeof(int); i++)
-	 * 	vector->deleted_items[i] = -1;
-	 */
+	for (size_t i = 0; i < vector->itemsize; i++)
+		vector->deleted_items[i] = -1;
 
 	// Check deleted item array to see if there is enough space
 	/*
