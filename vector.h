@@ -51,9 +51,6 @@ typedef struct {
 	size_t index;		// counter in numbers
 	size_t itemsize;	// in bytes
 	unsigned char *data;	// actualy data
-	int *deleted_items;	// funny but we need a vector inside a vector
-	int deleted_item_cap;	// deleted item vector's capacity as count
-	int deleted_item_index; // deleted item vector's current index
 } vector;
 
 int vector_init(vector *vector, int size);
@@ -70,8 +67,6 @@ int vector_init(vector *vector, int size)
 	vector->cap = VECTOR_INITIAL_CAP;
 	vector->index = 0;
 	vector->itemsize = size;
-	vector->deleted_item_index = 0;
-	vector->deleted_item_cap = VECTOR_INITIAL_DELETED_ITEM_CAP;
 	if ((vector->data = malloc(VECTOR_INITIAL_CAP)) == NULL)
 		return 0;
 	/*
@@ -116,20 +111,11 @@ void vector_replace_item(vector *vector, size_t index, void *data)
 {
 	// Place the data to the specified index
 	memcpy(vector->data + (index * vector->itemsize), data, vector->itemsize);
-
-	// Remove the item from deleted index
-	vector->deleted_items[index] = 0;
 }
 
 void *vector_get(vector *vector, size_t index)
 {
 	assert((size_t)vector->index >= (size_t)index);
-	/*
-	 * for (int i = 0; i < vector->deleted_item_cap; i++) {
-	 * 	if (index == (size_t)vector->deleted_items[i])
-	 * 		return NULL;
-	 * }
-	 */
 	return vector->data + (index * vector->itemsize);
 }
 
@@ -137,31 +123,7 @@ void *vector_get(vector *vector, size_t index)
 int vector_free_item(vector *vector, size_t index)
 {
 	// Clear deleted items
-	for (size_t i = 0; i < vector->itemsize; i++)
-		vector->deleted_items[i] = -1;
-
-	// Check deleted item array to see if there is enough space
-	/*
-	 * if (vector->deleted_item_cap < vector->deleted_item_index) {
-	 * 	size_t newcap = vector->deleted_item_cap * 2 * sizeof(int);
-	 * 	unsigned char *tmp = realloc(vector->data, newcap);
-	 * 	if (tmp == NULL) {
-	 * 		tmp = malloc(newcap);
-	 * 		if (tmp == NULL)
-	 * 			return 0;
-	 * 		memcpy(tmp, vector->deleted_items, vector->deleted_item_index * sizeof(int));
-	 * 		free(vector->deleted_items);
-	 * 	}
-	 * 	vector->cap = newcap;
-	 * 	vector->data = tmp;
-	 * }
-	 */
-
-	// Add the index to the deleted items vector
-	/*
-	 * vector->deleted_items[vector->deleted_item_index] = index;
-	 * vector->deleted_item_index++;
-	 */
+	memset(vector->data + (index * vector->itemsize), 0, vector->itemsize);
 	return 1;
 }
 
