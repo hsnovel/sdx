@@ -86,21 +86,10 @@ int arena_init(arena *ar)
 // @Todo: Add alignement for the next pushed memory
 void * _arena_push_size(arena *ar, size_t size)
 {
-	// Grow the arena memory if not enough space
-	// is present for the pushed size
+	// OF Course.. we cannot grow it as
+	// the previous memory adresses
+	// I will handle this later
 	if (ar->cap <= size + ar->used) {
-		size_t newcap = ar->cap * 2 + size;
-		unsigned char *tmp = realloc(ar->data, newcap);
-		if (tmp == NULL) {
-			tmp = malloc(newcap);
-			if (tmp == NULL)
-				return 0;
-			memcpy(tmp, ar->data, ar->stack_pointer);
-			free(ar->data);
-		}
-		ar->cap = newcap;
-		ar->data = tmp;
-		printf("newcap: %ld\n", newcap);
 	}
 
 	ar->used += size;
