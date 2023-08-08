@@ -43,7 +43,7 @@ typedef struct {
 	size_t data_size;
 } strvec;
 
-#define STRVEC_INITIAL_DATA_CAP 255
+#define STRVEC_INITIAL_DATA_CAP 256
 #define STRVEC_INITIAL_STR_COUNT 16
 
 
