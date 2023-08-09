@@ -94,8 +94,34 @@ int array_push(array *array, void *data)
 		array->data = tmp;
 	}
 	memcpy(array->data + (array->index * array->itemsize), data, array->itemsize);
-	array->index++;
-	return 1;
+	return array->index++;
+}
+
+// When using this function DO NOT call
+// array_push or array_alloc before writing
+// into the memory that you want, as the pointer
+// that you get back can be removed and reassigned
+// to another address, so when you use this function
+// assign the value right after and leave it as is
+// before calling any other pushing or reserving function
+// from this library, you might write into a invalid memory
+// so be careful!
+void *array_alloc(array *array)
+{
+	if (array->cap <= (array->index * array->itemsize) + array->itemsize) {
+		size_t newcap = array->cap * 2;
+		unsigned char *tmp = realloc(array->data, newcap);
+		if (tmp == NULL) {
+			tmp = malloc(newcap);
+			if (tmp == NULL)
+				return NULL;
+			memcpy(tmp, array->data, array->index * array->itemsize);
+			free(array->data);
+		}
+		array->cap = newcap;
+		array->data = tmp;
+	}
+	return array->data + (array->index++ * array->itemsize);
 }
 
 void array_replace_item(array *array, size_t index, void *data)
