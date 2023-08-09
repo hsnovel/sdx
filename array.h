@@ -22,8 +22,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef VECTOR_H
-#define VECTOR_H
+#ifndef ARRAY_H
+#define ARRAY_H
 
 //----------------------------------------------------------------------
 //    PLEASE DO NOT USE THIS LIBRARY, IT IS CURRENTLY EXPERIMENTAL
@@ -42,32 +42,32 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#define VECTOR_INITIAL_CAP 256
-#define VECTOR_INITIAL_BACKTRACK 32
-#define VECTOR_INITIAL_DELETED_ITEM_CAP 16
+#define ARRAY_INITIAL_CAP 256
+#define ARRAY_INITIAL_BACKTRACK 32
+#define ARRAY_INITIAL_DELETED_ITEM_CAP 16
 
 typedef struct {
 	size_t cap;		// in bytes
 	size_t index;		// counter in numbers
 	size_t itemsize;	// in bytes
 	unsigned char *data;	// actualy data
-} vector;
+} array;
 
-int vector_init(vector *vector, int size);
-int vector_push(vector *vector, void *data);
-void *vector_get(vector *vector, size_t index);
-void vector_pop(vector *vector);
+int array_init(array *array, int size);
+int array_push(array *array, void *data);
+void *array_get(array *array, size_t index);
+void array_pop(array *array);
 
-#endif // VECTOR_H
+#endif // ARRAY_H
 
-#ifdef VECTOR_IMPLEMENTATION
+#ifdef ARRAY_IMPLEMENTATION
 
-int vector_init(vector *vector, int size)
+int array_init(array *array, int size)
 {
-	vector->cap = VECTOR_INITIAL_CAP;
-	vector->index = 0;
-	vector->itemsize = size;
-	if ((vector->data = malloc(VECTOR_INITIAL_CAP)) == NULL)
+	array->cap = ARRAY_INITIAL_CAP;
+	array->index = 0;
+	array->itemsize = size;
+	if ((array->data = malloc(ARRAY_INITIAL_CAP)) == NULL)
 		return 0;
 
 	return 1;
@@ -75,61 +75,61 @@ int vector_init(vector *vector, int size)
 
 // Unfortunately we cannot replace deleted items with
 // the data* as it will screw the indexing. For that
-// Whenever vector_free_item() is used it will
+// Whenever array_free_item() is used it will
 // leave a fragmentation behind. For a non
 // fragmented version please check arena.h
-int vector_push(vector *vector, void *data)
+int array_push(array *array, void *data)
 {
-	if (vector->cap <= (vector->index * vector->itemsize) + vector->itemsize) {
-		size_t newcap = vector->cap * 2;
-		unsigned char *tmp = realloc(vector->data, newcap);
+	if (array->cap <= (array->index * array->itemsize) + array->itemsize) {
+		size_t newcap = array->cap * 2;
+		unsigned char *tmp = realloc(array->data, newcap);
 		if (tmp == NULL) {
 			tmp = malloc(newcap);
 			if (tmp == NULL)
 				return 0;
-			memcpy(tmp, vector->data, vector->index * vector->itemsize);
-			free(vector->data);
+			memcpy(tmp, array->data, array->index * array->itemsize);
+			free(array->data);
 		}
-		vector->cap = newcap;
-		vector->data = tmp;
+		array->cap = newcap;
+		array->data = tmp;
 	}
-	memcpy(vector->data + (vector->index * vector->itemsize), data, vector->itemsize);
-	vector->index++;
+	memcpy(array->data + (array->index * array->itemsize), data, array->itemsize);
+	array->index++;
 	return 1;
 }
 
-void vector_replace_item(vector *vector, size_t index, void *data)
+void array_replace_item(array *array, size_t index, void *data)
 {
 	// Place the data to the specified index
-	memcpy(vector->data + (index * vector->itemsize), data, vector->itemsize);
+	memcpy(array->data + (index * array->itemsize), data, array->itemsize);
 }
 
-void *vector_get(vector *vector, size_t index)
+void *array_get(array *array, size_t index)
 {
-	assert((size_t)vector->index >= (size_t)index);
-	return vector->data + (index * vector->itemsize);
+	assert((size_t)array->index >= (size_t)index);
+	return array->data + (index * array->itemsize);
 }
 
 // We maybe hash this values later.
-int vector_free_item(vector *vector, size_t index)
+int array_free_item(array *array, size_t index)
 {
 	// Clear deleted items
-	memset(vector->data + (index * vector->itemsize), 0, vector->itemsize);
+	memset(array->data + (index * array->itemsize), 0, array->itemsize);
 	return 1;
 }
 
-void vector_free(vector *vector)
+void array_free(array *array)
 {
-	free(vector->data);
-	vector->cap = 0;
-	vector->itemsize = 0;
-	vector->index = 0;
+	free(array->data);
+	array->cap = 0;
+	array->itemsize = 0;
+	array->index = 0;
 }
 
-void vector_pop(vector *vector)
+void array_pop(array *array)
 {
-	vector_free_item(vector, vector->index - 1);
-	vector->index--;
+	array_free_item(array, array->index - 1);
+	array->index--;
 }
 
-#endif // VECTOR_IMPLEMENTATION
+#endif // ARRAY_IMPLEMENTATION
