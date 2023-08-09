@@ -94,4 +94,18 @@
 #define GIGABYTE(x) ((x) / (1024 * 1024 * 1024))
 #define TERABYTE(x) ((x) / (1024 * 1024 * 1024 * 1024))
 
+#include <errno.h>
+
+// Allocate and print a formatted string to returned buffer
+#ifndef xasprintf
+#define xasprintf(format, ...) ({					\
+	size_t needed = snprintf(NULL, 0, format, ##__VA_ARGS__) + 1; \
+	char *buffer = (char *)malloc(needed);		\
+	if (buffer == NULL)\
+		NULL; \
+	sprintf(buffer, format, ##__VA_ARGS__);		\
+	buffer;						\
+})
+#endif
+
 #endif
