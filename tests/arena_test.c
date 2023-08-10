@@ -33,12 +33,11 @@ int main()
 	*fvalue = 0.125;
 	assert(*fvalue == 0.125);
 
+	for (int i = 0; i < 100000; i++) {
+		arena_alloc(&ar, sizeof(int));
+	}
+
 	printf("No errors are reported\n");
 
-	/*
-	 * for (int i = 0; i < 100000; i++) {
-	 * 	arena_alloc(&ar, sizeof(int));
-	 * }
-	 */
 
 }
