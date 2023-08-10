@@ -56,7 +56,7 @@ typedef struct entire_file
 	size_t size;
 } fs_file;
 
-fs_file fs_read_file(char *path);
+fs_file fs_read_file(char *path, char *mode);
 int fs_space(char *path, fs_space_info *space);
 int fs_create_directory(char *path);
 int fs_create_file(char *path);

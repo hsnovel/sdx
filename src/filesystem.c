@@ -24,11 +24,11 @@
 
 #include "filesystem.h"
 
-fs_file fs_read_file(char *path)
+fs_file fs_read_file(char *path, char *mode)
 {
 	fs_file result = {0};
 
-	FILE *file = fopen(path, "rb");
+	FILE *file = fopen(path, mode);
 	if(!file) {
 		result.contents = 0;
 		result.size = 0;

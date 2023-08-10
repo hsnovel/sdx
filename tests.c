@@ -101,7 +101,7 @@ void test_array()
 void test_string_view()
 {
 	printf("======= STRING VIEW TEST START\n");
-	fs_file file = fs_read_file("resources/string_view_file.txt");
+	fs_file file = fs_read_file("resources/string_view_file.txt", "r+");
 	string_view view = sv_from_parts(file.contents, file.size);
 	string_view next_line = sv_next_line(view);
 	printf(SV_Fmt, SV_Arg(next_line));
