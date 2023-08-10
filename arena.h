@@ -25,155 +25,109 @@
 #ifndef ARENA_H
 #define ARENA_H
 
-//----------------------------------------------------------------------
-//    PLEASE DO NOT USE THIS LIBRARY, IT IS CURRENTLY EXPERIMENTAL
-//----------------------------------------------------------------------
-// THIS LIBRARY'S DEVELOPMENT IS STOPPED UNTILL I MAKE A HASHMAP LIBRARY
-//----------------------------------------------------------------------
+// This library is not a main memory allocator but more of a
+// temporary one, or if you are sure you are never going to
+// free memory this should be a perfect fit as well, this
+// arena implementation does depend on array.h, it does not
+// handle fragmentations or anything like that. This is as
+// lightweight as it can get. This library may leave a lot of
+// empty space if you are allocating a single chunk with bigger
+// size than ARENA_DEFAULT_DATA_CAP. This arena library will grow
+// automatically, so you don't have to depend on a fixed size memory
 
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <limits.h>
 #include <assert.h>
-#define VECTOR_IMPLEMENTATION
-#include "vector.h"
+
+#define ARRAY_IMPLEMENTATION
+#include "array.h"
 
 typedef struct {
 	unsigned char *data;	// actual arena memory
-	vector backtrack;	// vector of backtrack_info, stores fragmented parts
 	size_t cap;		// capacity of data*
-	size_t stack_pointer;	// stack_pointer part of data*
 	size_t used;
-	int flags;		// user defined flags
-} arena;
+} arena_entry;
 
 typedef struct {
-	void *start;		// starting address of the fragmented part
-	size_t size;		// size of the fragmented part in bytes
-} backtrack_info;
+	array arenas;
+	int current_arena; // index
+	int flags;
+} arena;
 
 int arena_init(arena *ar);
-void * _arena_push_size(arena *ar, size_t size);
-void arena_free(arena *ar, void *ptr, size_t size);
-void _arena_get();
+void *arena_alloc(arena *ar, size_t size);
+int arena_entry_init(arena_entry *ar, size_t size);
+void _arena_entry_get();
 
-#define arena_free_type(arena, ptr) arena_free(arena, ptr, sizeof(*ptr))
-#define arena_alloc(arena, size) _arena_push_size(arena, size);
-
+#ifndef ARENA_DEFAULT_DATA_CAP
+#define ARENA_DEFAULT_DATA_CAP 4096 // All pages are set to 4k by default
 #endif
+
+#endif // ARENA_H
 
 #ifdef ARENA_IMPLEMENTATION
 
-#define ARENA_DEFAULT_DATA_CAP 256
-
-int arena_init(arena *ar)
+int arena_entry_init(arena_entry *ar, size_t size)
 {
-	ar->stack_pointer = 0;
-	ar->flags = 0;
-	ar->cap = ARENA_DEFAULT_DATA_CAP;
+	if (size != 0)
+		ar->cap = size;
+	else
+		ar->cap = ARENA_DEFAULT_DATA_CAP;
 	ar->used = 0;
 
 	if ((ar->data = malloc(ar->cap)) == NULL) return 0;
-	if ((vector_init(&ar->backtrack, sizeof(backtrack_info))) == 0) {
-		free(ar->data);
-		return 0;
-	}
 
 	return 1;
 }
 
+int arena_init(arena *ar)
+{
+	array_init(&ar->arenas, sizeof(arena_entry));
+	ar->current_arena = 0;
+
+	arena_entry initial_entry;
+	arena_entry_init(&initial_entry, 0);
+	array_push(&ar->arenas, &initial_entry);
+	return 1;
+}
+
 // @Todo: Add alignement for the next pushed memory
-void * _arena_push_size(arena *ar, size_t size)
+void *arena_push_size(arena_entry *ar, size_t size)
 {
-	// OF Course.. we cannot grow it as
-	// the previous memory adresses
-	// I will handle this later
-	if (ar->cap <= size + ar->used) {
-	}
+	if (ar->cap < size + ar->used)
+		return NULL;
 
+	void *current = ar->data + ar->used;
 	ar->used += size;
-
-	// No previously freed memory is present
-	if (ar->backtrack.index == 0) {
-		size_t prev_stack_pointer = ar->stack_pointer;
-		ar->stack_pointer += size;
-		return ar->data + prev_stack_pointer;
-	}
-
-	// Freed memory is present, loop through backtrace
-
-	// Make sure that initial best_fit is always replaced with
-	// the first pick, set the size to highest possible value
-	backtrack_info best_fit = { .start = NULL, .size = ULONG_MAX};
-
-	size_t i = 0;
-	size_t best_fit_index = 0;
-	do {
-		backtrack_info *current = vector_get(&ar->backtrack, i);
-		assert(current != NULL && "vector_get returned NULL\n");
-		// Check if size is sufficent enough to hold it or
-		// vector we got is not deleted
-		if ((current->size < size) || (current->size == 0)) {
-			i++;
-			continue;
-		}
-
-		if (current->size < best_fit.size) {
-			best_fit = *current;
-			best_fit_index = i;
-		}
-		i++;
-	} while (i < ar->backtrack.index);
-
-	// Nowhere to fit the current allocation
-	// push it to the top
-	if (best_fit.start == NULL) {
-		size_t prev_stack_pointer = ar->stack_pointer;
-		ar->stack_pointer += size;
-		return ar->data + prev_stack_pointer;
-	}
-	ar->stack_pointer += size;
-
-	// Good fit is found, check memory left over
-	// and replace the current current best fit
-	// with the space left over
-	size_t space_leftover = best_fit.size - size;
-
-	// If it fits perfectly then do not replace it
-	// instead delete the entry and return the space
-	if (space_leftover == 0) {
-		vector_free_item(&ar->backtrack, best_fit_index);
-		return best_fit.start;
-	}
-
-	// If there is a space left, replace the
-	// current fragmentation with the new one
-	// that points to the beggining of the new
-	// fragmentation part
-	backtrack_info fragmented_part = {
-		.start = (unsigned char*)best_fit.start + size,
-		.size = space_leftover,
-	};
-
-	vector_replace_item(&ar->backtrack, best_fit_index, &fragmented_part);
-	return best_fit.start;
+	return current;
 }
 
-void arena_free(arena *ar, void *ptr, size_t size)
+void *arena_alloc(arena *ar, size_t size)
 {
-	// Add fragmentation entry to backtrack vector
-	backtrack_info info = { .start = ptr, .size = size };
-	vector_push(&ar->backtrack, &info);
-	ar->used -= size;
+	arena_entry *current_entry = array_get(&ar->arenas, ar->current_arena);
+	printf("used: %d\n", current_entry->used);
 
-	// if we are deleting the last element, then
-	// update the stack pointer to point to that place
-	if (ptr == ar->data + ar->stack_pointer)
-		ar->stack_pointer -= size;
+	// in either case we will need to allocate a new block of memory
+	if ((size > ARENA_DEFAULT_DATA_CAP) || ((arena_push_size(current_entry, size)) == NULL)) {
+		printf("entry %d is full, moving onto the next one\n", ar->current_arena);
+		arena_entry new_entry;
 
-	// clear the memory
-	memset(ptr, 0, size);
+		if (size > ARENA_DEFAULT_DATA_CAP)
+			arena_entry_init(&new_entry, size);
+		else
+			arena_entry_init(&new_entry, 0);
+
+		array_push(&ar->arenas, &new_entry);
+		ar->current_arena++;
+		printf("allocated new entry\n");
+
+		arena_entry *current_entry = array_get(&ar->arenas, ar->current_arena);
+		if ((arena_push_size(current_entry, size)) == NULL) {
+			printf("THIS SHOULD NEVER BE A CASE\n");
+		}
+	}
 }
 
-#endif
+#endif // ARENA_IMPLEMENTATION
