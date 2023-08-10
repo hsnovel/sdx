@@ -40,6 +40,8 @@ int main()
 		arena_alloc(&ar, sizeof(int));
 	}
 
+	arena_free(&ar);
+
 	printf("No errors are reported\n");
 
 

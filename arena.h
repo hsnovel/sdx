@@ -179,4 +179,14 @@ void *arena_alloc(arena *ar, size_t size)
 	return result;
 }
 
+void arena_free(arena *ar)
+{
+	for (int i = 0; i < ar->arenas.index; i++) {
+		arena_entry *entry = array_get(&ar->arenas, i);
+		free(entry->data);
+	}
+
+	array_free(&ar->arenas);
+}
+
 #endif // ARENA_IMPLEMENTATION
