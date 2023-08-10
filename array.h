@@ -25,12 +25,6 @@
 #ifndef ARRAY_H
 #define ARRAY_H
 
-//----------------------------------------------------------------------
-//    PLEASE DO NOT USE THIS LIBRARY, IT IS CURRENTLY EXPERIMENTAL
-//----------------------------------------------------------------------
-//   HEAVILY RECCOMENDED TO NOT USE IT, IT IS CURRENTLY FULL OF BUGS
-//----------------------------------------------------------------------
-
 /*
  * on fail 0 is returned, otherwise
  * 1 is returned.
@@ -43,8 +37,6 @@
 #include <assert.h>
 
 #define ARRAY_INITIAL_CAP 256
-#define ARRAY_INITIAL_BACKTRACK 32
-#define ARRAY_INITIAL_DELETED_ITEM_CAP 16
 
 typedef struct {
 	size_t cap;		// in bytes
