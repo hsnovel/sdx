@@ -1,54 +1,39 @@
 #define ARENA_IMPLEMENTATION
 #include "../arena.h"
 
-#include <stdio.h>
-
 typedef struct {
 	int a;
 	int b;
 	int c;
-	int k;
-	int n;
-	int p;
-	int r;
-	int s;
-	int t;
-	int x;
-	int y;
-	int z;
-	int o;
+	int d;
+	int e;
 	int f;
 	int g;
-	int l;
-} teststr;
-
-typedef struct {
-	teststr a;
-	teststr b;
-	teststr c;
-	teststr d;
-} bigstr;
+} test_struct;
 
 int main()
 {
 	arena ar;
-	if (arena_init(&ar) == 0) {
-		printf("Unable to init arena\n");
-	}
+	arena_init(&ar);
+	int *data = arena_alloc(&ar, sizeof(int));
+	*data = 20;
+	assert(*data == 20);
 
-	bigstr *data = arena_alloc(&ar, sizeof(bigstr));
-	bigstr *strc = arena_alloc(&ar, sizeof(bigstr));
-	if (strc == NULL) {
-		printf("Exiting");
-		exit(1);
-	}
+	int *data2 = arena_alloc(&ar, sizeof(int));
+	*data2 = 12;
+	assert(*data2 == 12);
 
-	for (int i = 0; i < 10000; i++) {
-		arena_free_type(&ar, data);
-		arena_free_type(&ar, strc);
-		data = arena_alloc(&ar, sizeof(bigstr));
-		strc = arena_alloc(&ar, sizeof(bigstr));
-	}
+	test_struct *test = arena_alloc(&ar, sizeof(test_struct));
+	test->a = 52;
+	test->b = 98;
+	assert(test->a == 52);
+	assert(test->b == 98);
+
+	float *fvalue = arena_alloc(&ar, sizeof(float));
+	*fvalue = 0.125;
+	assert(*fvalue == 0.125);
+
+	printf("No errors are reported\n");
 
 	/*
 	 * for (int i = 0; i < 100000; i++) {
