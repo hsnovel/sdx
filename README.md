@@ -6,24 +6,31 @@ os dependent tasks. This library tries to cover parts C library doesn't. All fil
 are single header. Most of the files do not depend on each other, if they do it is
 written in the table.
 
-ds stands for data structure.
-library    | lastest version | category | doc | description
+on status column:
+"wip" means that the library is not finished or not ready to use,
+may contain bugs and is not reccomended to currently use on big projects.
+
+"good" means that the library is either finished or passes the tests,
+it does not guarantee that there are no bugs but means that the library
+is in a usable state.
+
+library    | lastest version | status | doc | description
 --------------------- | ---- | -------- | --- | --------------------------------
-**[filesystem.h](filesystem.h)** | 0.01 | sys | null | provides file/directory manipulation, creation deletion etc. Depends on extra.h
-**[system.h](system.h)** | 0.01 | sys | null | provide os spesific functionalities, like reboot, poweroff, get number of cpu cores...
-**[vector.h](vector.h)** | 0.01 | ds | null | vector library that accepts any type.
-**[strvec.h](strvec.h)** | 0.01 | ds | [view](https://github.com/xcatalyst/std/blob/master/docs/strvec/) | vector library for strings
-**[log.h](log.h)** | 0.01 | utility | [view](https://github.com/xcatalyst/std/blob/master/docs/log/) | thread safe logging library
-**[string_view.h](string_view.h)** | 0.01 | utility | null | string view implementation for c
-**[extra.h](extra.h)** | 0.01 | utility | null | extra utility library, includes compiler spesific macros.
-**[file_format.h](file_format.h)** | 0.01 | utility | null | library for parsing file types, pe32, elf etc..
-**[types.h](types.h)** | 0.01 | utility | null | better names for types than posix_t
-**[arena.h](arena.h)** | 0.01 | utility | null | memory arena for c, experimental
-**[benchmark.h](benchmark.h)** | 0.01 | utility | null | benchmark library for c, experimental
+**[filesystem.h](filesystem.h)** | 0.01 | wip | null | provides file/directory manipulation, creation deletion etc. Depends on extra.h
+**[system.h](system.h)** | 0.01 | wip | null | provide os spesific functionalities, like reboot, poweroff, get number of cpu cores...
+**[array.h](array.h)** | 0.01 | wip | null | array library that accepts any type.
+**[strvec.h](strvec.h)** | 0.01 | wip | [view](https://github.com/xcatalyst/std/blob/master/docs/strvec/) | array library for strings
+**[log.h](log.h)** | 0.01 | good | [view](https://github.com/xcatalyst/std/blob/master/docs/log/) | thread safe logging library
+**[string_view.h](string_view.h)** | 0.01 | good | null | string view implementation for c
+**[extra.h](extra.h)** | 0.01 | wip | null | extra utility library, includes compiler spesific macros.
+**[file_format.h](file_format.h)** | 0.01 | wip | null | library for parsing file types, pe32, elf etc..
+**[types.h](types.h)** | 0.01 | good | null | better names for types than posix_t
+**[arena.h](arena.h)** | 0.01 | wip | null | memory arena for c, experimental
+**[benchmark.h](benchmark.h)** | 0.01 | wip | null | benchmark library for c, experimental
 
 ## Coding style
 std follows [linux kernel coding style](https://www.kernel.org/doc/html/v4.10/process/coding-style.html) except couple of things.
 * Typedef structs, for the reason that they should be "opaque" to the user. Messing with indexes or data by hand might break
-the library. And typing struct in front of something like vector gives the programmer the feeling that they can mess with
+the library. And typing struct in front of something like array gives the programmer the feeling that they can mess with
 the internal data, which can crash the program.
 * Comments can also be //. This library is C99 compatible so there should be no problem with that comment style.
