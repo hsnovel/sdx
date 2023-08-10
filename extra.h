@@ -1,5 +1,4 @@
-// This file is a part of std libraries
-// https://github.com/xcatalyst/std
+// This file is a part of std libraries // https://github.com/xcatalyst/std
 // Licensed under the MIT License <http://opensource.org/licenses/MIT>.
 //
 // MIT License
@@ -92,9 +91,7 @@
 
 
 /* Array Size */
-#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __is_array(arr))
-#define __is_array(a) BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
-#define __same_type(a, b) __builtin_types_compatible_p(typeof(a), typeof(b))
+#define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
 
 #define KILOBYTE(x) ((x) / 1024)
 #define MEGABYTE(x) ((x) / (1024 * 1024))
