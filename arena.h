@@ -107,11 +107,9 @@ void *arena_push_size(arena_entry *ar, size_t size)
 void *arena_alloc(arena *ar, size_t size)
 {
 	arena_entry *current_entry = array_get(&ar->arenas, ar->current_arena);
-	printf("used: %d\n", current_entry->used);
 
 	// in either case we will need to allocate a new block of memory
 	if ((size > ARENA_DEFAULT_DATA_CAP) || ((arena_push_size(current_entry, size)) == NULL)) {
-		printf("entry %d is full, moving onto the next one\n", ar->current_arena);
 		arena_entry new_entry;
 
 		if (size > ARENA_DEFAULT_DATA_CAP)
@@ -121,12 +119,9 @@ void *arena_alloc(arena *ar, size_t size)
 
 		array_push(&ar->arenas, &new_entry);
 		ar->current_arena++;
-		printf("allocated new entry\n");
 
 		arena_entry *current_entry = array_get(&ar->arenas, ar->current_arena);
-		if ((arena_push_size(current_entry, size)) == NULL) {
-			printf("THIS SHOULD NEVER BE A CASE\n");
-		}
+		arena_push_size(current_entry, size);
 	}
 }
 
