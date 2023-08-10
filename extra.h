@@ -89,7 +89,6 @@
 #defined FORCE_INLINE __forceinline
 #endif
 
-
 /* Array Size */
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
 
@@ -97,6 +96,16 @@
 #define MEGABYTE(x) ((x) / (1024 * 1024))
 #define GIGABYTE(x) ((x) / (1024 * 1024 * 1024))
 #define TERABYTE(x) ((x) / (1024 * 1024 * 1024 * 1024))
+
+#define MIN(x, y)           (((x) < (y)) ?  (x) : (y))
+#define MAX(x, y)           (((x) > (y)) ?  (x) : (y))
+#define ABS(x)              (((x) <  0) ? -(x) : (x))
+#define SWAP(a, b)          do { a ^= b; b ^= a; a ^= b; } while ( 0 )
+
+#define SETBIT(x,p)     ((x)|(1<<(p)))
+#define CLEARBIT(x,p)   ((x)&(~(1<<(p))))
+#define GETBIT(x,p)     (((x)>>(p))&1)
+#define TOGGLEBIT(x,p)  ((x)^(1<<(p)))
 
 #include <errno.h>
 
