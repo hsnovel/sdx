@@ -218,3 +218,41 @@ int fs_move_file(char* source, char* dest)
 	return !result;
 #endif
 }
+
+/**
+ * Get file creation, modify access status
+ *
+ * @param {char*} path: Source path to file to get status
+ * @param {fs_file_time*} time: Struct to receive file information
+ * @return {int}: On success 1 is returned, on failure 0 is returned and
+ * errorno is set.
+ */
+int fs_file_time(char *path, fs_ftime_info *time)
+{
+#ifdef _STD_UNIX
+	int err;
+	struct stat attr;
+
+	err = stat(path, &attr);
+	if (err == -1)
+		return 0;
+	/*  */
+	time->last_access = attr.st_atime;
+	time->last_modify = attr.st_mtime;
+	time->last_status_change = attr.st_ctime;
+
+	return 1;
+#elif defined (_STD_WINDOWS)
+#endif
+}
+
+int fs_cwd(char *dst, int size)
+{
+#ifdef _STD_UNIX
+	if (getcwd(dst, size) != NULL)
+		return 1;
+	return 0;
+#elif defined (_STD_WINDOWS)
+	return !!GetCurrentDirectory(size, dst)
+#endif
+}

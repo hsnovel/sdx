@@ -31,6 +31,7 @@
 #define _GNU_SOURCE
 #endif
 
+#include <time.h>
 #ifdef _STD_UNIX
 #include <sys/stat.h>
 #include <sys/statvfs.h>
@@ -50,11 +51,17 @@ typedef struct {
 	size_t available;
 } fs_space_info;
 
-typedef struct entire_file
+typedef struct
 {
 	void *contents;
 	size_t size;
 } fs_file;
+
+typedef struct {
+	time_t last_access;
+	time_t last_modify;
+	time_t last_status_change; // This is creation date in win32
+} fs_ftime_info;
 
 fs_file fs_read_file(char *path, char *mode);
 int fs_space(char *path, fs_space_info *space);
@@ -64,5 +71,7 @@ int fs_delete_directory(char *path);
 int fs_delete_file(char *path);
 int fs_copy_file(char* source, char* dest);
 int fs_move_file(char* source, char* dest);
+int fs_file_time(char *path, fs_ftime_info *time);
+int fs_cwd(char *dst, int size);
 
 #endif

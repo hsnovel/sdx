@@ -1,4 +1,5 @@
 #include "filesystem.h"
+#include "extra.h"
 #include <stdio.h>
 #include "array.h"
 #include "arena.h"
@@ -109,6 +110,38 @@ void test_string_view()
 
 }
 
+void test_fs()
+{
+	printf("======= FILESYSTEM TEST START\n");
+
+	char cwd[500];
+	/*
+	 * getcwd(cwd, sizeof(cwd));
+	 */
+	if (fs_cwd(cwd, 500) == 0)
+		fprintf(stderr, "Unable to get cwd\n");
+	else
+		printf("CWD: %s\n", cwd);
+
+	char *test_file_path = xasprintf("%s/resources/access_time.txt", cwd);
+	printf("test_file_path: %s\n", test_file_path);
+
+	struct tm* current_time;
+	fs_ftime_info time;
+	if (fs_file_time(test_file_path, &time) == 0)
+		printf("%s\n", strerror(errno));
+
+	time_t tx =  time.last_modify;
+
+	char date[16];
+	current_time = localtime(&tx);
+	date[strftime(date, sizeof(date), "%H:%M:%S", current_time)] = '\0';
+	printf("Last modify date: %s\n", date);
+
+	free(test_file_path);
+	printf("======= FILESYSTEM TEST END\n\n\n");
+}
+
 void test_strvec()
 {
 	printf("======= STRVEC TEST START\n");
@@ -164,6 +197,7 @@ int main()
 	test_string_view();
 	test_array();
 	test_system();
+	test_fs();
 	/*
 	 * test_strvec();
 	 */
