@@ -64,7 +64,6 @@ enum  {
 int arena_init(arena *ar);
 void *arena_alloc(arena *ar, size_t size);
 int arena_entry_init(arena_entry *ar, size_t size);
-void _arena_entry_get();
 void arena_align_next_block(arena *ar);
 void arena_align_untill_disabled(arena *ar);
 void arena_align_disable(arena *ar);
