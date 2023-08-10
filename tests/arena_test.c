@@ -19,15 +19,18 @@ int main()
 	*data = 20;
 	assert(*data == 20);
 
-	int *data2 = arena_alloc(&ar, sizeof(int));
+	char *data2 = arena_alloc(&ar, sizeof(char));
 	*data2 = 12;
 	assert(*data2 == 12);
 
+	arena_align_next_block(&ar);
 	test_struct *test = arena_alloc(&ar, sizeof(test_struct));
 	test->a = 52;
 	test->b = 98;
 	assert(test->a == 52);
 	assert(test->b == 98);
+	assert((size_t)test % sizeof(void*) == 0);
+
 
 	float *fvalue = arena_alloc(&ar, sizeof(float));
 	*fvalue = 0.125;
