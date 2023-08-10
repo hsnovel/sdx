@@ -57,11 +57,6 @@ SV_DEF string_view sv_next_line(string_view sv);
 #define SV_Arg(sv) (int) (sv).len, (sv).data
 
 #define SV(cstr) sv_from_parts(cstr, sizeof(cstr) - 1)
-#define SV_STATIC(cstr)			\
-	{					\
-		sizeof(cstr) - 1,		\
-			(cstr)		\
-			}
 
 #endif /* STRING_VIEW_H */
 
