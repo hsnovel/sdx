@@ -658,10 +658,7 @@ void elf64_swap_bytes(elf32_header *header)
  */
 int pe32_does_signature_exist(char *data)
 {
-	if (*(uint32_t*)(((uint8_t*)data) + 0xE8) == FILE_FORMAT_PE32_SIGNATURE_EXISTS)
-		return 1;
-	else
-		return 0;
+	return (*(uint32_t*)(((uint8_t*)data) + 0xE8) == FILE_FORMAT_PE32_SIGNATURE_EXISTS);
 }
 
 /**
