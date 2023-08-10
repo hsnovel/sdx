@@ -41,7 +41,6 @@
 #include <limits.h>
 #include <assert.h>
 
-#define ARRAY_IMPLEMENTATION
 #include "array.h"
 
 typedef struct {
@@ -68,125 +67,10 @@ void arena_align_next_block(arena *ar);
 void arena_align_untill_disabled(arena *ar);
 void arena_align_disable(arena *ar);
 void arena_align_disable_full(arena *ar);
+void arena_free(arena *ar);
 
 #ifndef ARENA_DEFAULT_DATA_CAP
 #define ARENA_DEFAULT_DATA_CAP 4096 // All pages are set to 4k by default
 #endif
 
 #endif // ARENA_H
-
-#ifdef ARENA_IMPLEMENTATION
-
-// Unset other alignement options if present, then set the
-// current alignement policy
-void arena_align_next_block(arena *ar)
-{
-	if ((!(ar->flags & ALIGN_NEXT_BLOCK))) {
-		if (ar->flags & ALIGN_UNTILL_DISABLED)
-			ar->flags &= ~(ALIGN_UNTILL_DISABLED);
-		ar->flags |= ALIGN_NEXT_BLOCK;
-	}
-}
-
-void arena_align_untill_disabled(arena *ar)
-{
-	if ((!(ar->flags & ALIGN_UNTILL_DISABLED))) {
-		if (ar->flags & ALIGN_NEXT_BLOCK)
-			ar->flags &= ~(ALIGN_NEXT_BLOCK);
-		ar->flags |= ALIGN_UNTILL_DISABLED;
-	}
-}
-
-void arena_align_disable(arena *ar)
-{
-	ar->flags &= ~(ALIGN_UNTILL_DISABLED);
-}
-
-void arena_align_disable_full(arena *ar)
-{
-	ar->flags &= ~(ALIGN_NEXT_BLOCK);
-	ar->flags &= ~(ALIGN_UNTILL_DISABLED);
-}
-
-int arena_entry_init(arena_entry *ar, size_t size)
-{
-	if (size != 0)
-		ar->cap = size;
-	else
-		ar->cap = ARENA_DEFAULT_DATA_CAP;
-	ar->used = 0;
-
-	if ((ar->data = malloc(ar->cap)) == NULL) return 0;
-
-	return 1;
-}
-
-int arena_init(arena *ar)
-{
-	array_init(&ar->arenas, sizeof(arena_entry));
-	ar->current_arena = 0;
-	ar->flags = 0;
-
-	arena_entry initial_entry;
-	arena_entry_init(&initial_entry, 0);
-	array_push(&ar->arenas, &initial_entry);
-	return 1;
-}
-
-// @Todo: Add alignement for the next pushed memory
-void *arena_push_size(arena_entry *ar, size_t size, int should_align)
-{
-	int align_off = 0;
-	if (should_align)
-		align_off = (size_t)(ar->data + size) % sizeof(void*) - 1;
-
-	if (ar->cap < size + ar->used + align_off)
-		return NULL;
-
-	void *current = ar->data + ar->used + align_off;
-	ar->used += size + align_off;
-	return current;
-}
-
-void *arena_alloc(arena *ar, size_t size)
-{
-	int should_align = 0;
-	arena_entry *current_entry = array_get(&ar->arenas, ar->current_arena);
-
-	if (ar->flags & ALIGN_NEXT_BLOCK) {
-		should_align = 1;
-		ar->flags &= ~(ALIGN_NEXT_BLOCK);
-	} else if(ar->flags & ALIGN_UNTILL_DISABLED) {
-		should_align = 1;
-	}
-
-	// in either case we will need to allocate a new block of memory
-	void *result = arena_push_size(current_entry, size, should_align);
-	if ((size > ARENA_DEFAULT_DATA_CAP) || result == NULL) {
-		arena_entry new_entry;
-
-		if (size > ARENA_DEFAULT_DATA_CAP)
-			arena_entry_init(&new_entry, size);
-		else
-			arena_entry_init(&new_entry, 0);
-
-		array_push(&ar->arenas, &new_entry);
-		ar->current_arena++;
-
-		arena_entry *current_entry = array_get(&ar->arenas, ar->current_arena);
-		return arena_push_size(current_entry, size, should_align);
-	}
-	return result;
-}
-
-void arena_free(arena *ar)
-{
-	for (int i = 0; i < ar->arenas.index; i++) {
-		arena_entry *entry = array_get(&ar->arenas, i);
-		free(entry->data);
-	}
-
-	array_free(&ar->arenas);
-}
-
-#endif // ARENA_IMPLEMENTATION

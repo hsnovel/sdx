@@ -110,6 +110,7 @@ double get_wall_time(){
 double get_cpu_time(){
 	return (double)clock() / CLOCKS_PER_SEC;
 }
+
 #endif
 
 
