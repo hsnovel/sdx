@@ -84,6 +84,13 @@
 #defined UNREACHABLE
 #endif
 
+#if defined(_STD_GCC) || defined(_STD_CLANG)
+#define FORCE_INLINE __attribute__((always_inline))
+#elif defined (_STD_MSVC)
+#defined FORCE_INLINE __forceinline
+#endif
+
+
 /* Array Size */
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __is_array(arr))
 #define __is_array(a) BUILD_BUG_ON_ZERO(__same_type((a), &(a)[0]))
