@@ -76,8 +76,7 @@ int array_init(array *array, int size)
 // Unfortunately we cannot replace deleted items with
 // the data* as it will screw the indexing. For that
 // Whenever array_free_item() is used it will
-// leave a fragmentation behind. For a non
-// fragmented version please check arena.h
+// leave a fragmentation behind.
 int array_push(array *array, void *data)
 {
 	if (array->cap <= (array->index * array->itemsize) + array->itemsize) {
