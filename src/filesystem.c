@@ -42,6 +42,7 @@ fs_file fs_read_file(char *path, char *mode)
 	result.contents = malloc(result.size);
 	if(result.contents && result.size) {
 		fread(result.contents, result.size, 1, file);
+		((char*)result.contents)[result.size] = '\0';
 	}
 	else {
 		result.contents = 0;

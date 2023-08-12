@@ -47,6 +47,7 @@ typedef struct {
 
 int array_init(array *array, int size);
 int array_push(array *array, void *data);
+void *array_alloc(array *array);
 int array_free_item(array *array, size_t index);
 void *array_get(array *array, size_t index);
 void array_replace_item(array *array, size_t index, void *data);
