@@ -39,7 +39,7 @@ fs_file fs_read_file(char *path, char *mode)
 	result.size = ftell(file);
 	fseek(file, 0, SEEK_SET);
 
-	result.contents = malloc(result.size);
+	result.contents = malloc(result.size + 1);
 	if(result.contents && result.size) {
 		fread(result.contents, result.size, 1, file);
 		((char*)result.contents)[result.size] = '\0';
