@@ -1,4 +1,5 @@
 #include "string_operations.h"
+#include <stdlib.h>
 
 char *skip_whitespace(char *in)
 {
@@ -67,3 +68,24 @@ char *skip_untill_x_char(char *in, char x)
 
 	return result;
 }
+
+// Return a null terminated string from a part of
+// a string
+char *get_substring(char *ptr, size_t size)
+{
+	char *result = malloc(size);
+	memcpy(result, ptr, size);
+	result[size] = '\0';
+	return result;
+}
+
+// This function does not check if dest has enough size
+// expects the caller to check for it, if they are NEVER
+// going to copy a big portion of the string such a check
+// might be unncesesary.
+void get_substring_dest(char *ptr, size_t size, char *dest)
+{
+	memcpy(dest, ptr, size);
+	dest[size] = '\0';
+}
+

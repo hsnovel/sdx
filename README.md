@@ -25,6 +25,7 @@ library    | lastest version | status | doc | description
 **[types.h](include/types.h)** | 0.01 | good | null | better names for types than posix_t
 **[arena.h](include/arena.h)** | 0.01 | wip | null | memory arena for c, experimental
 **[benchmark.h](include/benchmark.h)** | 0.01 | wip | null | benchmark library for c, experimental
+**[string_operations.h](include/string_operations.h)** | 0.01 | wip | null | string operation library
 
 ## Coding style
 std follows [linux kernel coding style](https://www.kernel.org/doc/html/v4.10/process/coding-style.html) except couple of things.
