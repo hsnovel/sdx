@@ -89,3 +89,10 @@ void get_substring_dest(char *ptr, size_t size, char *dest)
 	dest[size] = '\0';
 }
 
+char *skip_to_nextline(char *in)
+{
+	char *result = in;
+	while (*result != '\n')
+		result++;
+	return ++result;
+}
