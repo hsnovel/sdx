@@ -53,7 +53,7 @@ typedef struct {
 
 typedef struct
 {
-	void *contents;
+	char *data;
 	size_t size;
 } fs_file;
 
@@ -63,7 +63,7 @@ typedef struct {
 	time_t last_status_change; // This is creation date in win32
 } fs_ftime_info;
 
-fs_file fs_read_file(char *path, char *mode);
+fs_file fs_read_file(char *path);
 int fs_space(char *path, fs_space_info *space);
 int fs_create_directory(char *path);
 int fs_create_file(char *path);

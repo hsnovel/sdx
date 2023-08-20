@@ -102,8 +102,8 @@ void test_array()
 void test_string_view()
 {
 	printf("======= STRING VIEW TEST START\n");
-	fs_file file = fs_read_file("resources/string_view_file.txt", "r+");
-	string_view view = sv_from_parts(file.contents, file.size);
+	fs_file file = fs_read_file("resources/string_view_file.txt");
+	string_view view = sv_from_parts(file.data, file.size);
 	string_view next_line = sv_next_line(view);
 	printf(SV_Fmt, SV_Arg(next_line));
 	printf("======= STRING VIEW TEST END\n\n\n");
@@ -137,6 +137,9 @@ void test_fs()
 	current_time = localtime(&tx);
 	date[strftime(date, sizeof(date), "%H:%M:%S", current_time)] = '\0';
 	printf("Last modify date: %s\n", date);
+
+	fs_file build_file = fs_read_file("build.sh");
+	printf("BUILD FILE: %s\n", build_file.data);
 
 	free(test_file_path);
 	printf("======= FILESYSTEM TEST END\n\n\n");

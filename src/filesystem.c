@@ -24,13 +24,13 @@
 
 #include "filesystem.h"
 
-fs_file fs_read_file(char *path, char *mode)
+fs_file fs_read_file(char *path)
 {
 	fs_file result = {0};
 
-	FILE *file = fopen(path, mode);
+	FILE *file = fopen(path, "rb");
 	if(!file) {
-		result.contents = 0;
+		result.data = 0;
 		result.size = 0;
 		return result;
 	}
@@ -39,13 +39,13 @@ fs_file fs_read_file(char *path, char *mode)
 	result.size = ftell(file);
 	fseek(file, 0, SEEK_SET);
 
-	result.contents = malloc(result.size + 1);
-	if(result.contents && result.size) {
-		fread(result.contents, result.size, 1, file);
-		((char*)result.contents)[result.size] = '\0';
+	result.data = malloc(result.size + 1);
+	if(result.data && result.size) {
+		fread(result.data, result.size, 1, file);
+		((char*)result.data)[result.size] = '\0';
 	}
 	else {
-		result.contents = 0;
+		result.data = 0;
 		result.size = 0;
 	}
 
