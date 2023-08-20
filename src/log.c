@@ -57,7 +57,7 @@ static struct {
 };
 
 static const char* _log_level_strings[] = {
-	"NOTAG", "OK", "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
+	"NOTAG ", "OK ", "TRACE ", "DEBUG ", "INFO ", "WARN ", "ERROR ", "FATAL "
 };
 
 #if defined(LOG_ENABLE_BOLD_COLORS) && !defined(LOG_DISABLE_COLORS)
@@ -213,8 +213,12 @@ void _log(int level, int line, const char* file_name, const char* args, ...)
 
 	va_start(variadic_list, args);
 
+#ifdef LOG_DISABLE_ERROR_STRING
+	_log_print_file_info(_log_global_settings.terminal_descriptor, LOG_NOTAG, line, file_name);
+#else
 	/* Print the file information*/
 	_log_print_file_info(_log_global_settings.terminal_descriptor, scoped_level, line, file_name);
+#endif
 
 	/* Print user string */
 	vfprintf(_log_global_settings.terminal_descriptor, args, variadic_list);
