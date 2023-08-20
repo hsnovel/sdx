@@ -19,6 +19,7 @@ otherwise these macros will probably not work.
 LOG_ENABLE_BOLD_COLORS /* Works only if LOG_DISABLE_COLOR is not set */
 LOG_RELEASE /* Disables printing file properties and time */
 LOG_DISABLE_COLORS /* Disable all colors for log information names */
+LOG_DISABLE_ERROR_STRING /* Disable all error strings that are written before the message like ERROR, FATAL, INFO etc... */
 ```
 
 Logging functions
