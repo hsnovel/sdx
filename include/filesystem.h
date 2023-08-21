@@ -69,8 +69,15 @@ enum fs_error {
 	FS_SUCCESS = 1,
 };
 
-fs_file fs_file_read(char *path);
-int fs_file_write(char *path, void *data, size_t size);
+enum fs_mode {
+	FS_APPEND,
+	FS_WRITE,
+	FS_READ_BINARY,
+	FS_READ_TEXT,
+};
+
+fs_file fs_file_read(char *path, enum fs_mode mode);
+int fs_file_write(char *path, void *data, size_t size, enum fs_mode mode);
 int fs_file_create(char *path);
 int fs_file_copy(char* source, char* dest);
 int fs_file_delete(char *path);

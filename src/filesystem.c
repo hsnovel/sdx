@@ -24,11 +24,18 @@
 
 #include "filesystem.h"
 
-fs_file fs_file_read(char *path)
+char *fs_mode_map[] = {
+	[FS_APPEND] = "a",
+	[FS_WRITE] = "w",
+	[FS_READ_BINARY] = "rb",
+	[FS_READ_TEXT] = "r",
+};
+
+fs_file fs_file_read(char *path, enum fs_mode mode)
 {
 	fs_file result = {0};
 
-	FILE *file = fopen(path, "rb");
+	FILE *file = fopen(path, fs_mode_map[mode]);
 	if(!file) {
 		result.data = 0;
 		result.size = 0;
@@ -57,14 +64,21 @@ fs_file fs_file_read(char *path)
 /**
  * This function writes the data to the file at path
  *
+ * @param enum fs_mode {mode}: Mode can either be FS_APPEND
+ *	or FS_WRITE, if FS_APPEND then data is appended to the end
+ *	if FS_WRITE then the data inside the file is erased, then
+ *	specified data by the user is written
+ *
  * @return {int}: This function either returns
- * FS_UNABLE_TO_OPEN_FILE
- * FS_LEFT_UNWRITTEN_DATA
- * FS_SUCCESS.
+ *	FS_UNABLE_TO_OPEN_FILE
+ *	FS_LEFT_UNWRITTEN_DATA
+ *	FS_SUCCESS.
  */
-int fs_file_write(char *path, void *data, size_t size)
+
+// @Todo: Make another function to write to a spesific location
+int fs_file_write(char *path, void *data, size_t size, enum fs_mode mode)
 {
-	FILE *file = fopen(path, "w+");
+	FILE *file = fopen(path, fs_mode_map[mode]);
 	if(!file)
 		return FS_UNABLE_TO_OPEN_FILE;
 
