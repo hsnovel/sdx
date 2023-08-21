@@ -63,8 +63,14 @@ typedef struct {
 	time_t last_status_change; // This is creation date in win32
 } fs_ftime_info;
 
+enum fs_error {
+	FS_UNABLE_TO_OPEN_FILE,
+	FS_LEFT_UNWRITTEN_DATA,
+	FS_SUCCESS = 1,
+};
+
 fs_file fs_file_read(char *path);
-int fs_file_write(void *data, size_t size, char *path);
+int fs_file_write(char *path, void *data, size_t size);
 int fs_file_create(char *path);
 int fs_file_copy(char* source, char* dest);
 int fs_file_delete(char *path);

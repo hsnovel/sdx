@@ -54,19 +54,27 @@ fs_file fs_file_read(char *path)
 	return result;
 }
 
-int fs_file_write(void *data, size_t size, char *path)
+/**
+ * This function writes the data to the file at path
+ *
+ * @return {int}: This function either returns
+ * FS_UNABLE_TO_OPEN_FILE
+ * FS_LEFT_UNWRITTEN_DATA
+ * FS_SUCCESS.
+ */
+int fs_file_write(char *path, void *data, size_t size)
 {
-	FILE *file = fopen(path, "rb");
+	FILE *file = fopen(path, "w+");
 	if(!file)
-		return 0;
+		return FS_UNABLE_TO_OPEN_FILE;
 
 	if (fwrite(data, 1, size, file) != size) {
 		fclose(file);
-		return -1;
+		return FS_LEFT_UNWRITTEN_DATA;
 	}
 
 	fclose(file);
-	return 1;
+	return FS_SUCCESS;
 }
 
 int fs_space(char *path, fs_space_info *space)
