@@ -23,6 +23,94 @@
 // SOFTWARE.
 
 #include "system.h"
+#include <stdio.h>
+
+#ifdef _STD_WINDOWS
+#include <windows.h>
+#elif defined _STD_UNIX
+#include <errno.h>
+#include <string.h>
+#else
+#warning "Other platforms are not supported"
+#endif
+
+static FILE *sys_print_error_fd;
+
+/**
+ * This function does NOT check if the file is valid
+ * or not, it is expected from the user to check for it
+ * before calling this function
+ */
+void sys_set_error_fd(FILE fd)
+{
+
+}
+
+int sys_get_last_error()
+{
+#if defined _STD_WINDOWS
+	return GetLastError();
+#elif defined _STD_UNIX
+	return errno;
+#endif
+}
+
+/**
+ * Print errorcode to fd.
+ *
+ * @param {FILE*} fd: File descriptor to print output, should either be passed stdout or stderr
+ * @apram {int} errcode: Error code retrieved from sys_get_last_error.
+ */
+void sys_print_error(int errcode)
+{
+#if defined _STD_UNIX
+	fprintf(sys_print_error_fd, "Error: %s\n", strerror(errno));
+#elif defined _STD_WINDOWS
+	LPSTR errormsg;
+	FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+		       NULL, errcode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&errormsg, 0, NULL);
+	fprintf(sys_print_error_fd, "Error: %s\n", errormsg);
+	LocalFree(errormsg);
+#endif
+}
+
+/**
+ * Print errorcode retrieved from sys_get_last error to fd.
+ *
+ * @param {FILE*} fd: File descriptor to print output, should either be passed stdout or stderr
+ * @apram {int} errcode: Error code retrieved from sys_get_last_error.
+ */
+void sys_print_last_error()
+{
+#if defined _STD_UNIX
+	fprintf(sys_print_error_fd, "Error: %s\n", strerror(sys_get_last_error()));
+#elif defined _STD_WINDOWS
+	LPSTR errormsg;
+	FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+		       NULL, sys_get_last_error(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&errormsg, 0, NULL);
+	fprintf(sys_print_error_fd, "Error: %s\n", errormsg);
+	LocalFree(errormsg);
+#endif
+}
+
+/**
+ * Write the error message into allocated string, then point buf to it.
+ * The error message * is heap allocated so the programmer should free it explicitly.
+ *
+ * @param {int} errcode: Error code retrieved from sys_get_last_error.
+ * @param {char**} buf: Destinartion buffer to put the string.
+ */
+void sys_write_error(int errcode, char **buf)
+{
+#if defined _STD_WINDOWS
+	LPSTR errormsg;
+	FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+		       NULL, errcode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&errormsg, 0, NULL);
+	*buf = errormsg;
+#elif defined _STD_UNIX
+	*buf = strerror(errcode);
+#endif
+}
 
 /**
  * Check if debugger is attached to program.
