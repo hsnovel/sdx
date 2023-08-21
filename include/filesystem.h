@@ -63,15 +63,17 @@ typedef struct {
 	time_t last_status_change; // This is creation date in win32
 } fs_ftime_info;
 
-fs_file fs_read_file(char *path);
-int fs_space(char *path, fs_space_info *space);
-int fs_create_directory(char *path);
-int fs_create_file(char *path);
-int fs_delete_directory(char *path);
-int fs_delete_file(char *path);
-int fs_copy_file(char* source, char* dest);
-int fs_move_file(char* source, char* dest);
+fs_file fs_file_read(char *path);
+int fs_file_write(void *data, size_t size, char *path);
+int fs_file_create(char *path);
+int fs_file_copy(char* source, char* dest);
+int fs_file_delete(char *path);
+int fs_file_move(char* source, char* dest);
 int fs_file_time(char *path, fs_ftime_info *time);
+
+int fs_space(char *path, fs_space_info *space);
+int fs_directory_create(char *path);
+int fs_directory_delete(char *path);
 int fs_cwd(char *dst, int size);
 
 #endif

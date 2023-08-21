@@ -24,7 +24,7 @@
 
 #include "filesystem.h"
 
-fs_file fs_read_file(char *path)
+fs_file fs_file_read(char *path)
 {
 	fs_file result = {0};
 
@@ -52,6 +52,21 @@ fs_file fs_read_file(char *path)
 	fclose(file);
 
 	return result;
+}
+
+int fs_file_write(void *data, size_t size, char *path)
+{
+	FILE *file = fopen(path, "rb");
+	if(!file)
+		return 0;
+
+	if (fwrite(data, 1, size, file) != size) {
+		fclose(file);
+		return -1;
+	}
+
+	fclose(file);
+	return 1;
 }
 
 int fs_space(char *path, fs_space_info *space)
@@ -88,7 +103,7 @@ int fs_space(char *path, fs_space_info *space)
  * @return {int}: Errno is returned
  */
 
-int fs_create_directory(char *path)
+int fs_directory_create(char *path)
 {
 #ifdef _STD_UNIX
 	struct stat st = {0};
@@ -113,7 +128,7 @@ int fs_create_directory(char *path)
  * @param {char*} path: Path to create the directory, name of the directory is included to path
  * @return {int}: On success 1 is returned, otherwise errno is returned
  */
-int fs_create_file(char *path)
+int fs_file_create(char *path)
 {
 #ifdef _STD_UNIX
 	int fd = open(path, O_CREAT | S_IRUSR | S_IWUSR);
@@ -141,7 +156,7 @@ int fs_create_file(char *path)
  * @param {char*} path: Path to the directory to be deleted
  * @return {int}: 1 is returned on success, otherwise errno is returned
  */
-int fs_delete_directory(char *path)
+int fs_directory_delete(char *path)
 {
 #if defined _STD_UNIX
 	if (rmdir(path) == -1)
@@ -159,7 +174,7 @@ int fs_delete_directory(char *path)
  * @param {char*} path: Path to the file to be deleted
  * @return {int}: 1 is returned on success, otherwise errno is returned
  */
-int fs_delete_file(char *path)
+int fs_file_delete(char *path)
 {
 #if defined _STD_UNIX
 	if (remove(path) == -1)
@@ -179,7 +194,7 @@ int fs_delete_file(char *path)
  * @return {int}: On success 1 is returned, on failure 0 is returned and
  * errorno is set.
  */
-int fs_copy_file(char* source, char* dest)
+int fs_file_copy(char* source, char* dest)
 {
 #if defined _STD_WINDOWS
 	BOOL result = CopyFile(source, dest, FALSE);
@@ -209,7 +224,7 @@ int fs_copy_file(char* source, char* dest)
  * @return {int}: On success 1 is returned, on failure 0 is returned and
  * errorno is set.
  */
-int fs_move_file(char* source, char* dest)
+int fs_file_move(char* source, char* dest)
 {
 #if defined _STD_WINDOWS
 	BOOL result = MoveFile(source, dest);
