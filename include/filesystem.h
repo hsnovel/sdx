@@ -47,23 +47,23 @@
 #include <time.h>
 #include <stdlib.h>
 
-typedef struct {
+struct fs_space_info{
 	size_t capacity;
 	size_t free;
 	size_t available;
-} fs_space_info;
+};
 
-typedef struct
+struct fs_file
 {
 	char *data;
 	size_t size;
-} fs_file;
+};
 
-typedef struct {
+struct fs_ftime_info {
 	time_t last_access;
 	time_t last_modify;
 	time_t last_status_change; // This is creation date in win32
-} fs_ftime_info;
+};
 
 enum fs_error {
 	FS_UNABLE_TO_OPEN_FILE,
@@ -78,15 +78,15 @@ enum fs_mode {
 	FS_READ_TEXT,
 };
 
-fs_file fs_file_read(char *path, enum fs_mode mode);
+struct fs_file fs_file_read(char *path, enum fs_mode mode);
 int fs_file_write(char *path, void *data, size_t size, enum fs_mode mode);
 int fs_file_create(char *path);
 int fs_file_copy(char* source, char* dest);
 int fs_file_delete(char *path);
 int fs_file_move(char* source, char* dest);
-int fs_file_time(char *path, fs_ftime_info *time);
+int fs_file_time(char *path, struct fs_ftime_info *time);
 
-int fs_space(char *path, fs_space_info *space);
+int fs_space(char *path, struct fs_space_info *space);
 int fs_directory_create(char *path);
 int fs_directory_delete(char *path);
 int fs_cwd(char *dst, int size);

@@ -31,9 +31,9 @@ char *fs_mode_map[] = {
 	[FS_READ_TEXT] = "r",
 };
 
-fs_file fs_file_read(char *path, enum fs_mode mode)
+struct fs_file fs_file_read(char *path, enum fs_mode mode)
 {
-	fs_file result = {0};
+	struct fs_file result = {0};
 
 	FILE *file = fopen(path, fs_mode_map[mode]);
 	if(!file) {
@@ -91,7 +91,7 @@ int fs_file_write(char *path, void *data, size_t size, enum fs_mode mode)
 	return FS_SUCCESS;
 }
 
-int fs_space(char *path, fs_space_info *space)
+int fs_space(char *path, struct fs_space_info *space)
 {
 #ifdef _STD_UNIX
 	struct statvfs stat;
@@ -265,7 +265,7 @@ int fs_file_move(char* source, char* dest)
  * @return {int}: On success 1 is returned, on failure 0 is returned and
  * errorno is set.
  */
-int fs_file_time(char *path, fs_ftime_info *time)
+int fs_file_time(char *path, struct fs_ftime_info *time)
 {
 #ifdef _STD_UNIX
 	int err;
