@@ -1,6 +1,6 @@
 ## sdx
 
-sdx (Standart Extension) is a extended standart library for C, it aims to be minimal and easy to use.
+sdx (Standard Extension) is a extended standart library for C, it aims to be minimal and easy to use.
 It does not replace the standart library, it adds new featues that are missing.
 Current C standart does not have any data structures and does a poor job on handling
 os dependent tasks. This library tries to cover parts C library doesn't.
