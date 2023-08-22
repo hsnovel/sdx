@@ -74,7 +74,7 @@ void test_log()
 void test_array()
 {
 	printf("======= ARRAY TEST START\n");
-	array vec;
+	struct array vec;
 	array_init(&vec, sizeof(int));
 
 	int data = 0;
@@ -102,10 +102,11 @@ void test_array()
 void test_string_view()
 {
 	printf("======= STRING VIEW TEST START\n");
-	fs_file file = fs_file_read("resources/string_view_file.txt", FS_READ_TEXT);
+	struct fs_file file = fs_file_read("resources/string_view_file.txt", FS_READ_TEXT);
 	string_view view = sv_from_parts(file.data, file.size);
 	string_view next_line = sv_next_line(view);
 	printf(SV_Fmt, SV_Arg(next_line));
+
 	printf("======= STRING VIEW TEST END\n\n\n");
 
 }
@@ -127,7 +128,7 @@ void test_fs()
 	printf("test_file_path: %s\n", test_file_path);
 
 	struct tm* current_time;
-	fs_ftime_info time;
+	struct fs_ftime_info time;
 	if (fs_file_time(test_file_path, &time) == 0)
 		printf("%s\n", strerror(errno));
 
@@ -138,7 +139,7 @@ void test_fs()
 	date[strftime(date, sizeof(date), "%H:%M:%S", current_time)] = '\0';
 	printf("Last modify date: %s\n", date);
 
-	fs_file build_file = fs_file_read("build.sh", FS_READ_TEXT);
+	struct fs_file build_file = fs_file_read("build.sh", FS_READ_TEXT);
 	printf("BUILD FILE: %s\n", build_file.data);
 
 	free(test_file_path);
@@ -148,7 +149,7 @@ void test_fs()
 void test_strvec()
 {
 	printf("======= STRVEC TEST START\n");
-	strvec vec;
+	struct strvec vec;
 	if (!strvec_init(&vec)) {
 		printf("Unable to initialize strvec\n");
 		return;
@@ -156,6 +157,16 @@ void test_strvec()
 	int index1 = strvec_push(&vec, "test string1");
 	int index2 = strvec_push(&vec, "test string2");
 	int index3 = strvec_push(&vec, "test string3");
+
+	printf("%s\n", strvec_get(&vec, index1));
+
+	for(int i = 0; i < 1000; i++) {
+		strvec_push(&vec, "placeholder");
+	}
+
+	int index_new = strvec_push(&vec, "test string4");
+	printf("%s\n", strvec_get(&vec, index_new));
+	printf("%s\n", strvec_get(&vec, index_new - 1));
 
 	for(int i = 0; i < 1000; i++) {
 		strvec_push(&vec, "placeholder");
@@ -201,6 +212,7 @@ int main()
 	test_array();
 	test_system();
 	test_fs();
+	test_strvec();
 
 	/*
 	 * test_strvec();
