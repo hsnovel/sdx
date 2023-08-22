@@ -1,6 +1,6 @@
 #include "strvec.h"
 
-int strvec_init(strvec *arr)
+int strvec_init(struct strvec *arr)
 {
 	arr->data = malloc(STRVEC_INITIAL_DATA_CAP * sizeof(unsigned char));
 	if (arr->data == NULL)
@@ -21,7 +21,7 @@ int strvec_init(strvec *arr)
 	return 1;
 }
 
-int strvec_push(strvec *arr, unsigned char* str)
+int strvec_push(strruct strvec *arr, unsigned char* str)
 {
 	if (arr->offset_size >= arr->offset_cap) {
 		size_t newcap = arr->offset_cap * 10;
@@ -60,7 +60,7 @@ int strvec_push(strvec *arr, unsigned char* str)
 /* @Refactor: I might add an another array to this to keep track of empty
 * parts of the vecotor and loop though all of them when pushing a string to
 * see if there is any ampty space in cleared parts */
-int strvec_clear(strvec *arr, int index)
+int strvec_clear(struct strvec *arr, int index)
 {
 	int i = 0;
 	unsigned char *start = arr->data + arr->offset[index];
@@ -70,7 +70,7 @@ int strvec_clear(strvec *arr, int index)
 	memset(start, 0, i);
 }
 
-void strvec_delete_struct(strvec* arr)
+void strvec_delete_struct(struct strvec* arr)
 {
 	free(arr->data);
 	free(arr->offset);

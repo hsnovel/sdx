@@ -38,20 +38,20 @@
 
 #define ARRAY_INITIAL_CAP 256
 
-typedef struct {
+struct array {
 	size_t cap;		// in bytes
 	size_t index;		// counter in numbers
 	size_t itemsize;	// in bytes
 	unsigned char *data;	// actualy data
-} array;
+};
 
-int array_init(array *array, int size);
-int array_push(array *array, void *data);
-void *array_alloc(array *array);
-int array_free_item(array *array, size_t index);
-void *array_get(array *array, size_t index);
-void array_replace_item(array *array, size_t index, void *data);
-void array_pop(array *array);
-void array_free(array *array);
+int array_init(struct array *array, int size);
+int array_push(struct array *array, void *data);
+void *array_alloc(struct array *array);
+int array_free_item(struct array *array, size_t index);
+void *array_get(struct array *array, size_t index);
+void array_replace_item(struct array *array, size_t index, void *data);
+void array_pop(struct array *array);
+void array_free(struct array *array);
 
 #endif // ARRAY_H

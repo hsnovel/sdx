@@ -30,27 +30,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <array.h>
 
-typedef struct {
+struct strvec {
 	unsigned char *data;
-	size_t *offset;
-
-	size_t offset_cap;
-	size_t offset_size;
-	size_t index;
+	struct array offsets;
 
 	size_t data_cap;
 	size_t data_size;
-} strvec;
+};
 
 #define STRVEC_INITIAL_DATA_CAP 256
 #define STRVEC_INITIAL_STR_COUNT 16
 
 
-int strvec_init(strvec *arr);
-int strvec_push(strvec *arr, unsigned char* str);
-int strvec_clear(strvec *arr, int index);
-void strvec_delete_struct(strvec* arr);
-unsigned char *strvec_get(strvec *arr, int index);
+int strvec_init(struct strvec *arr);
+int strvec_push(struct strvec *arr, unsigned char* str);
+int strvec_clear(struct strvec *arr, int index);
+void strvec_delete_struct(struct strvec* arr);
+unsigned char *strvec_get(struct strvec *arr, int index);
 
 #endif /* STRVEC_H */

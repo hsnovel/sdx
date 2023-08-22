@@ -43,31 +43,31 @@
 
 #include "array.h"
 
-typedef struct {
+struct arena_entry {
 	unsigned char *data;	// actual arena memory
 	size_t cap;		// capacity of data*
 	size_t used;
-} arena_entry;
+};
 
-typedef struct {
-	array arenas;
+struct arena {
+	struct array arenas;
 	int current_arena; // index
 	int flags;
-} arena;
+};
 
 enum  {
 	ALIGN_NEXT_BLOCK = 1,
 	ALIGN_UNTILL_DISABLED = 2,
 };
 
-int arena_init(arena *ar);
-void *arena_alloc(arena *ar, size_t size);
-int arena_entry_init(arena_entry *ar, size_t size);
-void arena_align_next_block(arena *ar);
-void arena_align_untill_disabled(arena *ar);
-void arena_align_disable(arena *ar);
-void arena_align_disable_full(arena *ar);
-void arena_free(arena *ar);
+int arena_init(struct arena *ar);
+void *arena_alloc(struct arena *ar, size_t size);
+int arena_entry_init(struct arena_entry *ar, size_t size);
+void arena_align_next_block(struct arena *ar);
+void arena_align_untill_disabled(struct arena *ar);
+void arena_align_disable(struct arena *ar);
+void arena_align_disable_full(struct arena *ar);
+void arena_free(struct arena *ar);
 
 #ifndef ARENA_DEFAULT_DATA_CAP
 #define ARENA_DEFAULT_DATA_CAP 4096 // All pages are set to 4k by default

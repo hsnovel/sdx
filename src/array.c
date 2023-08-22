@@ -24,7 +24,7 @@
 
 #include "array.h"
 
-int array_init(array *array, int size)
+int array_init(struct array *array, int size)
 {
 	array->cap = ARRAY_INITIAL_CAP;
 	array->index = 0;
@@ -39,7 +39,7 @@ int array_init(array *array, int size)
 // the data* as it will screw the indexing. For that
 // Whenever array_free_item() is used it will
 // leave a fragmentation behind.
-int array_push(array *array, void *data)
+int array_push(struct array *array, void *data)
 {
 	if (array->cap <= (array->index * array->itemsize) + array->itemsize) {
 		size_t newcap = array->cap * 2;
@@ -67,7 +67,7 @@ int array_push(array *array, void *data)
 // before calling any other pushing or reserving function
 // from this library, you might write into a invalid memory
 // so be careful!
-void *array_alloc(array *array)
+void *array_alloc(struct array *array)
 {
 	if (array->cap <= (array->index * array->itemsize) + array->itemsize) {
 		size_t newcap = array->cap * 2;
@@ -85,27 +85,27 @@ void *array_alloc(array *array)
 	return array->data + (array->index++ * array->itemsize);
 }
 
-void array_replace_item(array *array, size_t index, void *data)
+void array_replace_item(struct array *array, size_t index, void *data)
 {
 	// Place the data to the specified index
 	memcpy(array->data + (index * array->itemsize), data, array->itemsize);
 }
 
-void *array_get(array *array, size_t index)
+void *array_get(struct array *array, size_t index)
 {
 	assert((size_t)array->index >= (size_t)index);
 	return array->data + (index * array->itemsize);
 }
 
 // We maybe hash this values later.
-int array_free_item(array *array, size_t index)
+int array_free_item(struct array *array, size_t index)
 {
 	// Clear deleted items
 	memset(array->data + (index * array->itemsize), 0, array->itemsize);
 	return 1;
 }
 
-void array_free(array *array)
+void array_free(struct array *array)
 {
 	free(array->data);
 	array->cap = 0;
@@ -113,13 +113,13 @@ void array_free(array *array)
 	array->index = 0;
 }
 
-void array_clear(array *array)
+void array_clear(struct array *array)
 {
 	memset(array->data, 0, array->index * array->itemsize);
 	array->index = 0;
 }
 
-void array_pop(array *array)
+void array_pop(struct array *array)
 {
 	array_free_item(array, array->index - 1);
 	array->index--;
