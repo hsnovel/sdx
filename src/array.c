@@ -113,6 +113,12 @@ void array_free(array *array)
 	array->index = 0;
 }
 
+void array_clear(array *array)
+{
+	memset(array->data, 0, array->index * array->itemsize);
+	array->index = 0;
+}
+
 void array_pop(array *array)
 {
 	array_free_item(array, array->index - 1);

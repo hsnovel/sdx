@@ -28,7 +28,7 @@ typedef struct {
 void test_arena()
 {
 	printf("======= ARENA TEST START\n");
-	arena ar;
+	struct arena ar;
 	arena_init(&ar);
 	int *data = arena_alloc(&ar, sizeof(int));
 	printf("offset: %d\n", (size_t)data % sizeof(void*));

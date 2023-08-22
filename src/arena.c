@@ -26,7 +26,7 @@
 
 // Unset other alignement options if present, then set the
 // current alignement policy
-void arena_align_next_block(arena *ar)
+void arena_align_next_block(struct arena *ar)
 {
 	if ((!(ar->flags & ALIGN_NEXT_BLOCK))) {
 		if (ar->flags & ALIGN_UNTILL_DISABLED)
@@ -35,7 +35,7 @@ void arena_align_next_block(arena *ar)
 	}
 }
 
-void arena_align_untill_disabled(arena *ar)
+void arena_align_untill_disabled(struct arena *ar)
 {
 	if ((!(ar->flags & ALIGN_UNTILL_DISABLED))) {
 		if (ar->flags & ALIGN_NEXT_BLOCK)
@@ -44,18 +44,18 @@ void arena_align_untill_disabled(arena *ar)
 	}
 }
 
-void arena_align_disable(arena *ar)
+void arena_align_disable(struct arena *ar)
 {
 	ar->flags &= ~(ALIGN_UNTILL_DISABLED);
 }
 
-void arena_align_disable_full(arena *ar)
+void arena_align_disable_full(struct arena *ar)
 {
 	ar->flags &= ~(ALIGN_NEXT_BLOCK);
 	ar->flags &= ~(ALIGN_UNTILL_DISABLED);
 }
 
-int arena_entry_init(arena_entry *ar, size_t size)
+int arena_entry_init(struct arena_entry *ar, size_t size)
 {
 	if (size != 0)
 		ar->cap = size;
@@ -68,20 +68,20 @@ int arena_entry_init(arena_entry *ar, size_t size)
 	return 1;
 }
 
-int arena_init(arena *ar)
+int arena_init(struct arena *ar)
 {
-	array_init(&ar->arenas, sizeof(arena_entry));
+	array_init(&ar->arenas, sizeof(struct arena_entry));
 	ar->current_arena = 0;
 	ar->flags = 0;
 
-	arena_entry initial_entry;
+	struct arena_entry initial_entry;
 	arena_entry_init(&initial_entry, 0);
 	array_push(&ar->arenas, &initial_entry);
 	return 1;
 }
 
 // @Todo: Add alignement for the next pushed memory
-void *arena_push_size(arena_entry *ar, size_t size, int should_align)
+void *arena_push_size(struct arena_entry *ar, size_t size, int should_align)
 {
 	int align_off = 0;
 	if (should_align)
@@ -95,10 +95,10 @@ void *arena_push_size(arena_entry *ar, size_t size, int should_align)
 	return current;
 }
 
-void *arena_alloc(arena *ar, size_t size)
+void *arena_alloc(struct arena *ar, size_t size)
 {
 	int should_align = 0;
-	arena_entry *current_entry = array_get(&ar->arenas, ar->current_arena);
+	struct  arena_entry *current_entry = array_get(&ar->arenas, ar->current_arena);
 
 	if (ar->flags & ALIGN_NEXT_BLOCK) {
 		should_align = 1;
@@ -110,7 +110,7 @@ void *arena_alloc(arena *ar, size_t size)
 	// in either case we will need to allocate a new block of memory
 	void *result = arena_push_size(current_entry, size, should_align);
 	if ((size > ARENA_DEFAULT_DATA_CAP) || result == NULL) {
-		arena_entry new_entry;
+		struct arena_entry new_entry;
 
 		if (size > ARENA_DEFAULT_DATA_CAP)
 			arena_entry_init(&new_entry, size);
@@ -120,16 +120,16 @@ void *arena_alloc(arena *ar, size_t size)
 		array_push(&ar->arenas, &new_entry);
 		ar->current_arena++;
 
-		arena_entry *current_entry = array_get(&ar->arenas, ar->current_arena);
+		struct arena_entry *current_entry = array_get(&ar->arenas, ar->current_arena);
 		return arena_push_size(current_entry, size, should_align);
 	}
 	return result;
 }
 
-void arena_free(arena *ar)
+void arena_free(struct arena *ar)
 {
 	for (size_t i = 0; i < ar->arenas.index; i++) {
-		arena_entry *entry = array_get(&ar->arenas, i);
+		struct arena_entry *entry = array_get(&ar->arenas, i);
 		free(entry->data);
 	}
 
