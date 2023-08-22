@@ -25,7 +25,7 @@
 #include "string_operations.h"
 #include <stdlib.h>
 
-char *skip_whitespace(char *in)
+char *so_skip_whitespace(char *in)
 {
 	char *result = in;
 	for (;;) {
@@ -43,7 +43,7 @@ char *skip_whitespace(char *in)
 	return result;
 }
 
-char *skip_untill_whitespace(char *in)
+char *so_skip_untill_whitespace(char *in)
 {
 	char *result = in;
 	for (;;) {
@@ -62,7 +62,7 @@ char *skip_untill_whitespace(char *in)
 
 }
 
-char *skip_untill_next_word(char *in)
+char *so_skip_untill_next_word(char *in)
 {
 	char *result = in;
 	for (;;) {
@@ -79,12 +79,12 @@ char *skip_untill_next_word(char *in)
 	}
 
  cleanup:
-	result = skip_whitespace(result);
+	result = so_skip_whitespace(result);
 	return result;
 
 }
 
-char *skip_untill_x_char(char *in, char x)
+char *so_skip_untill_x_char(char *in, char x)
 {
 	char *result = in;
 	while (*result != x)
@@ -95,7 +95,7 @@ char *skip_untill_x_char(char *in, char x)
 
 // Return a null terminated string from a part of
 // a string
-char *get_substring(char *ptr, size_t size)
+char *so_get_substring(char *ptr, size_t size)
 {
 	char *result = malloc(size);
 	memcpy(result, ptr, size);
@@ -107,13 +107,13 @@ char *get_substring(char *ptr, size_t size)
 // expects the caller to check for it, if they are NEVER
 // going to copy a big portion of the string such a check
 // might be unncesesary.
-void get_substring_dest(char *ptr, size_t size, char *dest)
+void so_get_substring_dest(char *ptr, size_t size, char *dest)
 {
 	memcpy(dest, ptr, size);
 	dest[size] = '\0';
 }
 
-char *skip_to_nextline(char *in)
+char *so_skip_to_nextline(char *in)
 {
 	char *result = in;
 	while (*result != '\n')
