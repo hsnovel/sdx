@@ -190,7 +190,7 @@ int sys_poweroff(void)
  * @param {sys_meminfo}: Pointer to a struct which will receive capacity and avaliable ram in bytes
  * @return {int}: On succeed 1 is returned, otherwise 0 is returned and errno is set.
  */
-int sys_get_memory_info(sys_meminfo *info)
+int sys_get_memory_info(struct sys_meminfo *info)
 {
 #if defined _STD_UNIX
 	long phpages = get_phys_pages();

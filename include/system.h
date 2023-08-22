@@ -38,16 +38,15 @@
 #include <sys/reboot.h>
 #endif
 
-typedef struct {
+struct sys_meminfo {
 	size_t capacity;
 	size_t available;
-} sys_meminfo;
+};
 
 int sys_is_debugger_attached(void);
 int sys_restart(void);
 int sys_poweroff(void);
-int sys_get_memory_info(sys_meminfo *info);
-int sys_get_memory_info(sys_meminfo *info);
+int sys_get_memory_info(struct sys_meminfo *info);
 int sys_get_num_cpu_core(void);
 int sys_get_num_cpu_core_avail(void);
 
