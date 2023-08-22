@@ -1,5 +1,6 @@
-// This file is a part of std libraries
-// https://github.com/xcatalyst/std
+// This file is a part of sdx libraries
+// https://github.com/xcatalyst/sdx
+//
 // Licensed under the MIT License <http://opensource.org/licenses/MIT>.
 //
 // MIT License
@@ -28,9 +29,9 @@
 #include "extra.h"
 #include <string.h>
 #include <ctype.h>
-#ifdef _STD_WINDOWS
+#ifdef _SDX_WINDOWS
 #include <windows.h>
-#elif defined(_STD_UNIX)
+#elif defined(_SDX_UNIX)
 #include <stddef.h>
 #include <fcntl.h>
 #include <unistd.h>

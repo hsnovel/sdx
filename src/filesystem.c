@@ -1,5 +1,6 @@
-// This file is a part of std libraries
-// https://github.com/xcatalyst/std
+// This file is a part of sdx libraries
+// https://github.com/xcatalyst/sdx
+//
 // Licensed under the MIT License <http://opensource.org/licenses/MIT>.
 //
 // MIT License
@@ -93,7 +94,7 @@ int fs_file_write(char *path, void *data, size_t size, enum fs_mode mode)
 
 int fs_space(char *path, struct fs_space_info *space)
 {
-#ifdef _STD_UNIX
+#ifdef _SDX_UNIX
 	struct statvfs stat;
 	statvfs(path, &stat);
 
@@ -102,7 +103,7 @@ int fs_space(char *path, struct fs_space_info *space)
 	space->available = stat.f_frsize * stat.f_bavail;
 
 	return 1;
-#elif defined _STD_WINDOWS
+#elif defined _SDX_WINDOWS
 	ULARGE_INTEGER freeBytesAvailable, totalNumberOfBytes, totalNumberOfFreeBytes;
 
 	if (GetDiskFreeSpaceEx(path, &freeBytesAvailable, &totalNumberOfBytes, &totalNumberOfFreeBytes))
@@ -127,7 +128,7 @@ int fs_space(char *path, struct fs_space_info *space)
 
 int fs_directory_create(char *path)
 {
-#ifdef _STD_UNIX
+#ifdef _SDX_UNIX
 	struct stat st = {0};
 
 	if (stat(path, &st) == -1) {
@@ -137,7 +138,7 @@ int fs_directory_create(char *path)
 	else {
 		return errno;
 	}
-#elif defined _STD_WINDOWS
+#elif defined _SDX_WINDOWS
 	BOOL result = CreateDirectoryA(path, NULL);
 	return !!result;
 #endif
@@ -152,7 +153,7 @@ int fs_directory_create(char *path)
  */
 int fs_file_create(char *path)
 {
-#ifdef _STD_UNIX
+#ifdef _SDX_UNIX
 	int fd = open(path, O_CREAT | S_IRUSR | S_IWUSR);
 	if (fd == -1)
 		return errno;
@@ -162,7 +163,7 @@ int fs_file_create(char *path)
 		return errno;
 
 	return 1;
-#elif defined _STD_WINDOWS
+#elif defined _SDX_WINDOWS
 	HANDLE fd = CreateFileA(path, GENERIC_WRITE, 0, NULL, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (fd != INVALID_HANDLE_VALUE) {
 		CloseHandle(fd);
@@ -180,11 +181,11 @@ int fs_file_create(char *path)
  */
 int fs_directory_delete(char *path)
 {
-#if defined _STD_UNIX
+#if defined _SDX_UNIX
 	if (rmdir(path) == -1)
 		return errno;
 	return 1;
-#elif defined _STD_WINDOWS
+#elif defined _SDX_WINDOWS
 	BOOL result = RemoveDirectoryA(path);
 	return !!result;
 #endif
@@ -198,11 +199,11 @@ int fs_directory_delete(char *path)
  */
 int fs_file_delete(char *path)
 {
-#if defined _STD_UNIX
+#if defined _SDX_UNIX
 	if (remove(path) == -1)
 		return errno;
 	return 1;
-#elif defined _STD_WINDOWS
+#elif defined _SDX_WINDOWS
 	BOOL result = DeleteFileA(path);
 	return !!result;
 #endif
@@ -218,10 +219,10 @@ int fs_file_delete(char *path)
  */
 int fs_file_copy(char* source, char* dest)
 {
-#if defined _STD_WINDOWS
+#if defined _SDX_WINDOWS
 	BOOL result = CopyFile(source, dest, FALSE);
 	return !!result;
-#elif defined(_STD_LINUX) || defined(_STD_FREEBSD)
+#elif defined(_SDX_LINUX) || defined(_SDX_FREEBSD)
 	int srcf = open(source, S_IRUSR, S_IWUSR);
 	int destf = open(dest, S_IRUSR, S_IWUSR);
 	struct stat st;
@@ -234,7 +235,7 @@ int fs_file_copy(char* source, char* dest)
 	close(srcf);
 	close(destf);
 	return 0;
-#elif defined _STD_UNIX
+#elif defined _SDX_UNIX
 #endif
 }
 
@@ -248,10 +249,10 @@ int fs_file_copy(char* source, char* dest)
  */
 int fs_file_move(char* source, char* dest)
 {
-#if defined _STD_WINDOWS
+#if defined _SDX_WINDOWS
 	BOOL result = MoveFile(source, dest);
 	return !!result;
-#elif defined _STD_UNIX
+#elif defined _SDX_UNIX
 	int result = rename(source, dest);
 	return !result;
 #endif
@@ -267,7 +268,7 @@ int fs_file_move(char* source, char* dest)
  */
 int fs_file_time(char *path, struct fs_ftime_info *time)
 {
-#ifdef _STD_UNIX
+#ifdef _SDX_UNIX
 	int err;
 	struct stat attr;
 
@@ -280,17 +281,17 @@ int fs_file_time(char *path, struct fs_ftime_info *time)
 	time->last_status_change = attr.st_ctime;
 
 	return 1;
-#elif defined (_STD_WINDOWS)
+#elif defined (_SDX_WINDOWS)
 #endif
 }
 
 int fs_cwd(char *dst, int size)
 {
-#ifdef _STD_UNIX
+#ifdef _SDX_UNIX
 	if (getcwd(dst, size) != NULL)
 		return 1;
 	return 0;
-#elif defined (_STD_WINDOWS)
+#elif defined (_SDX_WINDOWS)
 	return !!GetCurrentDirectory(size, dst)
 #endif
 }
