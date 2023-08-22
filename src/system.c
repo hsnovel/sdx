@@ -26,9 +26,9 @@
 #include "system.h"
 #include <stdio.h>
 
-#ifdef _STD_WINDOWS
+#ifdef _SDX_WINDOWS
 #include <windows.h>
-#elif defined _STD_UNIX
+#elif defined _SDX_UNIX
 #include <errno.h>
 #include <string.h>
 #else
@@ -49,9 +49,9 @@ void sys_set_error_fd(FILE fd)
 
 int sys_get_last_error()
 {
-#if defined _STD_WINDOWS
+#if defined _SDX_WINDOWS
 	return GetLastError();
-#elif defined _STD_UNIX
+#elif defined _SDX_UNIX
 	return errno;
 #endif
 }
@@ -64,9 +64,9 @@ int sys_get_last_error()
  */
 void sys_print_error(int errcode)
 {
-#if defined _STD_UNIX
+#if defined _SDX_UNIX
 	fprintf(sys_print_error_fd, "Error: %s\n", strerror(errno));
-#elif defined _STD_WINDOWS
+#elif defined _SDX_WINDOWS
 	LPSTR errormsg;
 	FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 		       NULL, errcode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&errormsg, 0, NULL);
@@ -78,14 +78,14 @@ void sys_print_error(int errcode)
 /**
  * Print errorcode retrieved from sys_get_last error to fd.
  *
- * @param {FILE*} fd: File descriptor to print output, should either be passed stdout or stderr
+ * @param {FILE*} fd: File descriptor to print output, should either be passed stdour or stderr
  * @apram {int} errcode: Error code retrieved from sys_get_last_error.
  */
 void sys_print_last_error()
 {
-#if defined _STD_UNIX
+#if defined _SDX_UNIX
 	fprintf(sys_print_error_fd, "Error: %s\n", strerror(sys_get_last_error()));
-#elif defined _STD_WINDOWS
+#elif defined _SDX_WINDOWS
 	LPSTR errormsg;
 	FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 		       NULL, sys_get_last_error(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&errormsg, 0, NULL);
@@ -103,12 +103,12 @@ void sys_print_last_error()
  */
 void sys_write_error(int errcode, char **buf)
 {
-#if defined _STD_WINDOWS
+#if defined _SDX_WINDOWS
 	LPSTR errormsg;
 	FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 		       NULL, errcode, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&errormsg, 0, NULL);
 	*buf = errormsg;
-#elif defined _STD_UNIX
+#elif defined _SDX_UNIX
 	*buf = strerror(errcode);
 #endif
 }
@@ -120,7 +120,7 @@ void sys_write_error(int errcode, char **buf)
  */
 int sys_is_debugger_attached(void)
 {
-#if defined _STD_UNIX
+#if defined _SDX_UNIX
 	char buf[4096];
 
 	const int status_fd = open("/proc/self/status", O_RDONLY);
@@ -147,7 +147,7 @@ int sys_is_debugger_attached(void)
 	}
 
 	return 0;
-#elif defined _STD_WINDOWS
+#elif defined _SDX_WINDOWS
 	return IsDebuggerPresent();
 #endif
 }
@@ -157,12 +157,12 @@ int sys_is_debugger_attached(void)
  */
 int sys_restart(void)
 {
-#if defined _STD_UNIX
+#if defined _SDX_UNIX
 	if (reboot(RB_AUTOBOOT) == -0)
 		return 1;
 	else
 		return 0;
-#elif defined _STD_WINDOWS
+#elif defined _SDX_WINDOWS
 
 	BOOL result = ExitWindowsEx(EWX_REBOOT,  SHTDN_REASON_MINOR_OTHER);
 	return !!result;
@@ -172,14 +172,14 @@ int sys_restart(void)
 /**
  * Log out, power off the system
  *
- * @return {int}: 1 is returned on success, else value from _STD_get_last_error(void) is
+ * @return {int}: 1 is returned on success, else value from _SDX_get_last_error(void) is
  * returned.
  */
 int sys_poweroff(void)
 {
-#if defined _STD_UNIX
+#if defined _SDX_UNIX
 	return reboot(RB_POWER_OFF);
-#elif defined _STD_WINDOWS
+#elif defined _SDX_WINDOWS
 	BOOL result = ExitWindowsEx(EWX_SHUTDOWN, SHTDN_REASON_MINOR_OTHER);
 	return !!result;
 #endif
@@ -193,7 +193,7 @@ int sys_poweroff(void)
  */
 int sys_get_memory_info(struct sys_meminfo *info)
 {
-#if defined _STD_UNIX
+#if defined _SDX_UNIX
 	long phpages = get_phys_pages();
 	if (phpages == -1)
 		return 0;
@@ -210,7 +210,7 @@ int sys_get_memory_info(struct sys_meminfo *info)
 	info->available = avphpages * pgsize;
 
 	return 1;
-#elif defined _STD_WINDOWS
+#elif defined _SDX_WINDOWS
 	MEMORYSTATUSEX memorystat;
 	memorystat.dwLength = sizeof(memorystat);
 
@@ -230,9 +230,9 @@ int sys_get_memory_info(struct sys_meminfo *info)
  */
 int sys_get_num_cpu_core(void)
 {
-#ifdef _STD_UNIX
+#ifdef _SDX_UNIX
 	return get_nprocs_conf();
-#elif defined _STD_WINDOWS
+#elif defined _SDX_WINDOWS
 	SYSTEM_INFO sysinfo;
 	GetSystemInfo(&sysinfo);
 	return sysinfo.dwNumberOfProcessors;
@@ -250,9 +250,9 @@ int sys_get_num_cpu_core(void)
  */
 int sys_get_num_cpu_core_avail(void)
 {
-#ifdef _STD_UNIX
+#ifdef _SDX_UNIX
 	return get_nprocs();
-#elif defined _STD_WINDOWS
+#elif defined _SDX_WINDOWS
 	SYSTEM_INFO sysinfo;
 	GetSystemInfo(&sysinfo);
 	return sysinfo.dwNumberOfProcessors;
