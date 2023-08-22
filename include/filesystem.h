@@ -28,21 +28,23 @@
 #include "extra.h"
 
 #ifdef _STD_LINUX
+#ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
+#endif
 
-#include <time.h>
 #ifdef _STD_UNIX
+#include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/statvfs.h>
 #include <unistd.h>
-#include <fcntl.h>
 #include <errno.h>
 #include <stdio.h>
 #elif defined _STD_WINDOWS
 #include <windows.h>
 #endif
 
+#include <time.h>
 #include <stdlib.h>
 
 typedef struct {
