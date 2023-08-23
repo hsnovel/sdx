@@ -126,9 +126,13 @@ void mem_debug_print()
 		}
 
 		tmp2 = current->ptr + current->num;
+		size_t outof_bounds_count = 0;
 		for (int i = 0; i < MEM_DEBUG_OVERRITE_NUM; i++)
-			if (!((unsigned char*)tmp2)[i] == MEM_DEBUG_OVERRITE_MAGIC_NUM)
-				printf("Memory at this location has been written out of bounds\n");
+			if (((unsigned char*)tmp2)[i] != MEM_DEBUG_OVERRITE_MAGIC_NUM)
+				outof_bounds_count++;
+
+		if (outof_bounds_count)
+			printf("Memory at this location has been written out of bounds %zu bytes\n", outof_bounds_count);
 	}
 
 	printf("----------------------\n");

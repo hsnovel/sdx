@@ -210,6 +210,10 @@ void test_mem_debug()
 {
 	mem_debug_init();
 	int *ptr = malloc(124);
+	char *ptr2 = (char*)ptr + 125;
+	*ptr2 = 12;
+	ptr2++;
+	*ptr2 = 13;
 	/*
 	 * ptr = realloc(ptr, 12421);
 	 */
@@ -217,7 +221,6 @@ void test_mem_debug()
 	free(ptr);
 
 	mem_debug_print();
-	printf("test\n");
 }
 
 int main()
