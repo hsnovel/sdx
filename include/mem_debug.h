@@ -18,12 +18,14 @@ void mem_debug_free(void *ptr, size_t line, char *file);
 #define free(x) mem_debug_free(x, __LINE__, __FILE__)
 #endif
 
-#ifndef MEM_DEBUG_OVERRITE_NUM
-#define MEM_DEBUG_OVERRITE_NUM 256
+#ifndef MEM_DEBUG_OUT_OF_BOUNDS_NUM
+#define MEM_DEBUG_OUT_OF_BOUNDS_NUM 256
 #endif
 
-#ifndef MEM_DEBUG_OVERRITE_MAGIC_NUM
-#define MEM_DEBUG_OVERRITE_MAGIC_NUM 154
+// It is reccomended to try different magic numbers for MEM_DEBUG_OUT_OF_BOUNDS_MAGIC_NUM
+// as the value written outside of the boound might be the same as the magic number, there
+#ifndef MEM_DEBUG_OUT_OF_BOUNDS_MAGIC_NUM
+#define MEM_DEBUG_OUT_OF_BOUNDS_MAGIC_NUM 154
 #endif
 
 #endif

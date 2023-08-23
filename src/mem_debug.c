@@ -18,11 +18,11 @@ static struct {
 
 void *mem_debug_malloc(size_t num, size_t line, char *file)
 {
-	void *mem = malloc(num + MEM_DEBUG_OVERRITE_NUM);
+	void *mem = malloc(num + MEM_DEBUG_OUT_OF_BOUNDS_NUM);
 	void *tmp = mem + num;
 
-	for (int i = 0; i < MEM_DEBUG_OVERRITE_NUM; i++)
-		((unsigned char*)tmp)[i] = MEM_DEBUG_OVERRITE_MAGIC_NUM;
+	for (int i = 0; i < MEM_DEBUG_OUT_OF_BOUNDS_NUM; i++)
+		((unsigned char*)tmp)[i] = MEM_DEBUG_OUT_OF_BOUNDS_MAGIC_NUM;
 
 	struct memory_info info;
 	{
@@ -127,8 +127,8 @@ void mem_debug_print()
 
 		tmp2 = current->ptr + current->num;
 		size_t outof_bounds_count = 0;
-		for (int i = 0; i < MEM_DEBUG_OVERRITE_NUM; i++)
-			if (((unsigned char*)tmp2)[i] != MEM_DEBUG_OVERRITE_MAGIC_NUM)
+		for (int i = 0; i < MEM_DEBUG_OUT_OF_BOUNDS_NUM; i++)
+			if (((unsigned char*)tmp2)[i] != MEM_DEBUG_OUT_OF_BOUNDS_MAGIC_NUM)
 				outof_bounds_count++;
 
 		if (outof_bounds_count)
