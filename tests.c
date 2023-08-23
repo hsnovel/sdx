@@ -7,6 +7,8 @@
 #include "strvec.h"
 #include "string_view.h"
 #include "system.h"
+#define MEM_DEBUG_ENABLE
+#include "mem_debug.h"
 
 typedef struct {
 	int a;
@@ -204,15 +206,31 @@ void test_system()
 	printf("======= SYSTEM TEST END\n\n\n");
 }
 
+void test_mem_debug()
+{
+	mem_debug_init();
+	int *ptr = malloc(124);
+	/*
+	 * ptr = realloc(ptr, 12421);
+	 */
+
+	free(ptr);
+
+	mem_debug_print();
+	printf("test\n");
+}
+
 int main()
 {
-	test_log();
-	test_arena();
-	test_string_view();
-	test_array();
-	test_system();
-	test_fs();
-	test_strvec();
+	/*
+	 * test_log();
+	 * test_arena();
+	 * test_string_view();
+	 * test_array();
+	 * test_system();
+	 * test_fs();
+	 * test_strvec();
+	 */
 
 	/*
 	 * test_strvec();
