@@ -2,6 +2,7 @@
 #include "mem_debug.h"
 
 #include <array.h>
+#include <time.h>
 
 struct memory_info {
 	void *ptr;
@@ -16,13 +17,25 @@ static struct {
 	struct array free_info;
 } mem_debug_info;
 
+static char bulk_memory[MEM_DEBUG_OUT_OF_BOUNDS_NUM];
+
+void randomize_buffer(char *buf, size_t size) {
+	srand(time(NULL));
+	for (size_t i = 0; i < size; i++)
+		buf[i] = rand() % 256;
+}
+
+
 void *mem_debug_malloc(size_t num, size_t line, char *file)
 {
 	void *mem = malloc(num + MEM_DEBUG_OUT_OF_BOUNDS_NUM);
 	void *tmp = mem + num;
 
-	for (int i = 0; i < MEM_DEBUG_OUT_OF_BOUNDS_NUM; i++)
-		((unsigned char*)tmp)[i] = MEM_DEBUG_OUT_OF_BOUNDS_MAGIC_NUM;
+	memcpy(tmp, bulk_memory, MEM_DEBUG_OUT_OF_BOUNDS_NUM);
+	/*
+	 * for (int i = 0; i < MEM_DEBUG_OUT_OF_BOUNDS_NUM; i++)
+	 * 	((unsigned char*)tmp)[i] = MEM_DEBUG_OUT_OF_BOUNDS_MAGIC_NUM;
+	 */
 
 	struct memory_info info;
 	{
@@ -126,13 +139,16 @@ void mem_debug_print()
 		}
 
 		tmp2 = current->ptr + current->num;
-		size_t outof_bounds_count = 0;
-		for (int i = 0; i < MEM_DEBUG_OUT_OF_BOUNDS_NUM; i++)
-			if (((unsigned char*)tmp2)[i] != MEM_DEBUG_OUT_OF_BOUNDS_MAGIC_NUM)
-				outof_bounds_count++;
 
-		if (outof_bounds_count)
-			printf("Memory at this location has been written out of bounds %zu bytes\n", outof_bounds_count);
+		int outof_bounds = memcmp(tmp2, bulk_memory, MEM_DEBUG_OUT_OF_BOUNDS_NUM);
+		/*
+		 * for (int i = 0; i < MEM_DEBUG_OUT_OF_BOUNDS_NUM; i++)
+		 * 	if (((unsigned char*)tmp2)[i] != MEM_DEBUG_OUT_OF_BOUNDS_MAGIC_NUM)
+		 * 		outof_bounds_count++;
+		 */
+
+		if (outof_bounds)
+			printf("Memory at this location has been written out of bounds\n");
 	}
 
 	printf("----------------------\n");
@@ -148,4 +164,5 @@ void mem_debug_init()
 		fprintf(stderr, "Unable to initialize array for memory debugging\n");
 		return;
 	}
+	randomize_buffer(bulk_memory, MEM_DEBUG_OUT_OF_BOUNDS_NUM);
 }
