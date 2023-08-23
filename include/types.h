@@ -51,4 +51,6 @@ typedef int64_t s64;
 typedef float f32;
 typedef double f64;
 
+typedef size_t usize;
+
 #endif
