@@ -222,15 +222,14 @@ void test_mem_debug()
 
 int main()
 {
-	/*
-	 * test_log();
-	 * test_arena();
-	 * test_string_view();
-	 * test_array();
-	 * test_system();
-	 * test_fs();
-	 * test_strvec();
-	 */
+	test_log();
+	test_arena();
+	test_string_view();
+	test_array();
+	test_system();
+	test_fs();
+	test_strvec();
+	test_mem_debug();
 
 	/*
 	 * test_strvec();
