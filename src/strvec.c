@@ -64,7 +64,7 @@ int strvec_init(struct strvec *arr)
 	return 1;
 }
 
-int strvec_push(struct strvec *arr, unsigned char* str)
+int strvec_push(struct strvec *arr, char* str)
 {
 	int len = strlen(str);
 	len++; /* \0 character */
