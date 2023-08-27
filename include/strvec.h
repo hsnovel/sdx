@@ -34,7 +34,7 @@
 #include <array.h>
 
 struct strvec {
-	unsigned char *data;
+	char *data;
 	struct array offsets;
 
 	size_t data_cap;

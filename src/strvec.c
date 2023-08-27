@@ -49,7 +49,7 @@
 
 int strvec_init(struct strvec *arr)
 {
-	arr->data = malloc(STRVEC_INITIAL_DATA_CAP * sizeof(unsigned char));
+	arr->data = malloc(STRVEC_INITIAL_DATA_CAP * sizeof(char));
 	if (arr->data == NULL)
 		return 0;
 
