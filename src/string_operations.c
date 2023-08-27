@@ -24,6 +24,7 @@
 
 #include "string_operations.h"
 #include <stdlib.h>
+#include <string.h>
 
 char *so_skip_whitespace(char *in)
 {
