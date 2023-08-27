@@ -49,6 +49,6 @@ int strvec_init(struct strvec *arr);
 int strvec_push(struct strvec *arr, char* str);
 int strvec_clear(struct strvec *arr, int index);
 void strvec_delete_struct(struct strvec* arr);
-unsigned char *strvec_get(struct strvec *arr, int index);
+char *strvec_get(struct strvec *arr, int index);
 
 #endif /* STRVEC_H */

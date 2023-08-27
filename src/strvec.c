@@ -101,7 +101,7 @@ void strvec_delete_struct(struct strvec* arr)
 {
 }
 
-unsigned char *strvec_get(struct strvec *arr, int index)
+char *strvec_get(struct strvec *arr, int index)
 {
 	assert(index < arr->offsets.index); /*  */
 	size_t offset = *((size_t*)array_get(&arr->offsets, index));
