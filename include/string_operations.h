@@ -26,6 +26,8 @@
 #ifndef STRING_OPERATIONS_H
 #define STRING_OPERATIONS_H
 
+#include <stddef.h>
+
 char *so_skip_whitespace(char *in);
 char *so_skip_untill_whitespace(char *in);
 char *so_skip_untill_next_word(char *in);
