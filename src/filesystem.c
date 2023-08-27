@@ -35,6 +35,7 @@ char *fs_mode_map[] = {
 struct fs_file fs_file_read(char *path, enum fs_mode mode)
 {
 	struct fs_file result = {0};
+	size_t alloc_size = 0;
 
 	FILE *file = fopen(path, fs_mode_map[mode]);
 	if(!file) {
@@ -47,10 +48,16 @@ struct fs_file fs_file_read(char *path, enum fs_mode mode)
 	result.size = ftell(file);
 	fseek(file, 0, SEEK_SET);
 
+	if (mode == FS_READ_TEXT)
+		alloc_size = result.size + 1;
+	else
+		alloc_size = result.size;
+
 	result.data = malloc(result.size + 1);
 	if(result.data && result.size) {
 		fread(result.data, result.size, 1, file);
-		((char*)result.data)[result.size] = '\0';
+		if (mode == FS_READ_TEXT)
+			((char*)result.data)[result.size] = '\0';
 	}
 	else {
 		result.data = 0;
