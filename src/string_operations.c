@@ -117,7 +117,7 @@ void so_get_substring_dest(char *ptr, size_t size, char *dest)
 char *so_skip_to_nextline(char *in)
 {
 	char *result = in;
-	while (*result != '\n')
+	while (*result != '\n' || *result != '\0')
 		result++;
 	return ++result;
 }
