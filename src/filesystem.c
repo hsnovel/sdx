@@ -25,6 +25,12 @@
 
 #include "filesystem.h"
 
+#ifdef _SDX_WINDOWS
+#include <io.h>
+#define F_OK 0
+#define access _access
+#endif
+
 char *fs_mode_map[] = {
 	[FS_APPEND] = "a",
 	[FS_WRITE] = "w",
@@ -301,4 +307,12 @@ int fs_cwd(char *dst, int size)
 #elif defined (_SDX_WINDOWS)
 	return !!GetCurrentDirectory(size, dst)
 #endif
+}
+
+/*
+ * Return 1 if file exists, 0 if not
+ */
+int fs_file_exists(char *path)
+{
+	return !access(path, F_OK);
 }

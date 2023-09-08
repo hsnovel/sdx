@@ -91,5 +91,6 @@ int fs_space(char *path, struct fs_space_info *space);
 int fs_directory_create(char *path);
 int fs_directory_delete(char *path);
 int fs_cwd(char *dst, int size);
+int fs_file_exists(char *path);
 
 #endif
