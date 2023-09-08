@@ -96,6 +96,26 @@ void test_array()
 	assert(*((int*)array_get(&vec, 25)) == 12 && "Assertion failed replaceing index 20");
 	assert(*((int*)array_get(&vec, 26)) == 26 && "Assertion failed checking index 26");
 
+	array_overwrite(&vec);
+
+	int data1 = 0;
+	for(int i = 0; i < 100000; i++) {
+		array_push(&vec, &data1);
+		data1++;
+	}
+	assert(*((int*)array_get(&vec, 99999)) == 99999 && "Assertion failed checking index 99999");
+
+	assert(*((int*)array_get(&vec, 20)) == 20 && "Assertion failed checkig index 20");
+
+	array_free_item(&vec, 20);
+	assert(*((int*)array_get(&vec, 20)) != 20 && "Assertion failed checkig index 20");
+
+	int newdata1 = 12;
+	array_replace_item(&vec, 25, &newdata1);
+	assert(*((int*)array_get(&vec, 25)) == 12 && "Assertion failed replaceing index 20");
+	assert(*((int*)array_get(&vec, 26)) == 26 && "Assertion failed checking index 26");
+
+
 	printf("No errors reported\n");
 
 	printf("======= ARRAY TEST END\n\n\n");

@@ -125,3 +125,8 @@ void array_pop(struct array *array)
 	array_free_item(array, array->index - 1);
 	array->index--;
 }
+
+void array_overwrite(struct array *array)
+{
+	array->index = 0;
+}
