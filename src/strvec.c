@@ -70,7 +70,7 @@ int strvec_push(struct strvec *arr, char* str)
 	len++; /* \0 character */
 	if (arr->data_size >= arr->data_cap) {
 		size_t newcap = (arr->data_cap * 10) + len;
-		unsigned char *tmp = malloc(newcap);
+		char *tmp = malloc(newcap);
 		memcpy(tmp, arr->data, arr->data_size);
 		arr->data_cap = newcap;
 		if (tmp == NULL)
@@ -79,7 +79,7 @@ int strvec_push(struct strvec *arr, char* str)
 	}
 
 
-	unsigned char *ptr = arr->data + arr->data_size;
+	char *ptr = arr->data + arr->data_size;
 	memcpy(ptr, str, len);
 
 	int index = array_push(&arr->offsets, &arr->data_size);
