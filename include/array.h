@@ -55,5 +55,6 @@ void array_replace_item(struct array *array, size_t index, void *data);
 void array_pop(struct array *array);
 void array_free(struct array *array);
 void array_overwrite(struct array *array);
+size_t array_size(struct array *array);
 
 #endif // ARRAY_H

@@ -130,3 +130,8 @@ void array_overwrite(struct array *array)
 {
 	array->index = 0;
 }
+
+size_t array_size(struct array *array)
+{
+	return array->index;
+}
