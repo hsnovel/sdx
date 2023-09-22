@@ -1,5 +1,5 @@
 // This file is a part of sdx libraries
-// https://github.com/xcatalyst/sdx
+// https://github.com/hsnovel/sdx
 //
 // Licensed under the MIT License <http://opensource.org/licenses/MIT>.
 //
