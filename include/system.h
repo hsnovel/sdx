@@ -50,5 +50,6 @@ int sys_poweroff(void);
 int sys_get_memory_info(struct sys_meminfo *info);
 int sys_get_num_cpu_core(void);
 int sys_get_num_cpu_core_avail(void);
+int sys_get_cache_line_size();
 
 #endif

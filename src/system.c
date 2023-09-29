@@ -258,3 +258,15 @@ int sys_get_num_cpu_core_avail(void)
 	return sysinfo.dwNumberOfProcessors;
 #endif
 }
+
+/**
+ * TODO: Add windows version
+ *
+ */
+int sys_get_cache_line_size()
+{
+#ifdef _SDX_UNIX
+	return sysconf (_SC_LEVEL1_DCACHE_LINESIZE);
+#elif defined  _SDX_WINDOWS
+#endif
+}
