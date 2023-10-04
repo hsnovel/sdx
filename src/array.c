@@ -25,9 +25,9 @@
 
 #include "array.h"
 
-int array_init(struct array *array, int size)
+int array_init(struct array *array, size_t size, size_t num_alloc)
 {
-	array->cap = ARRAY_INITIAL_CAP;
+	num_alloc = (num_alloc == 0) ? ARRAY_INITIAL_CAP : num_alloc;
 	array->index = 0;
 	array->itemsize = size;
 	if ((array->data = malloc(ARRAY_INITIAL_CAP)) == NULL)

@@ -46,7 +46,7 @@ struct array {
 	unsigned char *data;	// actualy data
 };
 
-int array_init(struct array *array, int size);
+int array_init(struct array *array, size_t size, size_t num_alloc);
 int array_push(struct array *array, void *data);
 void *array_alloc(struct array *array);
 int array_free_item(struct array *array, size_t index);

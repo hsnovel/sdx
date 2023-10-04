@@ -71,7 +71,7 @@ int arena_entry_init(struct arena_entry *ar, size_t size)
 
 int arena_init(struct arena *ar)
 {
-	array_init(&ar->arenas, sizeof(struct arena_entry));
+	array_init(&ar->arenas, sizeof(struct arena_entry), 0);
 	ar->current_arena = 0;
 	ar->flags = 0;
 

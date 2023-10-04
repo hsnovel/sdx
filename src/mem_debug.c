@@ -181,11 +181,11 @@ void mem_debug_print()
 
 void mem_debug_init()
 {
-	if (!array_init(&mem_debug_info.malloc_info, sizeof(struct memory_info))) {
+	if (!array_init(&mem_debug_info.malloc_info, sizeof(struct memory_info), 0)) {
 		fprintf(stderr, "Unable to initialize array for memory debugging\n");
 		return;
 	}
-	if (!array_init(&mem_debug_info.free_info, sizeof(struct memory_info))) {
+	if (!array_init(&mem_debug_info.free_info, sizeof(struct memory_info), 0)) {
 		fprintf(stderr, "Unable to initialize array for memory debugging\n");
 		return;
 	}

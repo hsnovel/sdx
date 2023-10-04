@@ -77,7 +77,7 @@ void test_array()
 {
 	printf("======= ARRAY TEST START\n");
 	struct array vec;
-	array_init(&vec, sizeof(int));
+	array_init(&vec, sizeof(int), 0);
 
 	int data = 0;
 	for(int i = 0; i < 100000; i++) {

@@ -53,7 +53,7 @@ int strvec_init(struct strvec *arr)
 	if (arr->data == NULL)
 		return 0;
 
-	if (!array_init(&arr->offsets, sizeof(size_t))) {
+	if (!array_init(&arr->offsets, sizeof(size_t), 0)) {
 		free(arr->data);
 		return 0;
 	}
