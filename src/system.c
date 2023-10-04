@@ -35,6 +35,10 @@
 #warning "Other platforms are not supported"
 #endif
 
+#if defined (__FreeBSD__)
+#include <sys/param.h>
+#endif
+
 static FILE *sys_print_error_fd;
 
 /**
@@ -265,8 +269,44 @@ int sys_get_num_cpu_core_avail(void)
  */
 int sys_get_cache_line_size()
 {
-#ifdef _SDX_UNIX
-	return sysconf (_SC_LEVEL1_DCACHE_LINESIZE);
-#elif defined  _SDX_WINDOWS
+	int cache_line_size;
+
+	cache_line_size = 64;
+#if defined (_SDX_UNIX) && defined(_SC_LEVEL1_DCACHE_LINESIZE)
+	if ((cache_line_size = sysconf(_SC_LEVEL1_DCACHE_LINESIZE)) > 0)
+		return cache_line_size;
+#elif defined (_SDX_UNIX)
+	FILE *f;
+
+	f = fopen("/sys/devices/system/cpu/cpu0/cache/index0/coherency_line_size", "r");
+	if (f) {
+		int r = fscanf(f, "%d", &cache_line_size);
+		fclose(f);
+
+		return (r == 1) ? cacheline_size : 64;
+	}
 #endif
+#if defined(__FreeBSD__) && defined(CACHE_LINE_SIZE)
+	// We don't support freebsd but doesn't hurt to put it
+	cache_line_size = CACHE_LINE_SIZE;
+#elif defined  _SDX_WINDOWS
+	DWORD buffer_size = 0;
+	DWORD i = 0;
+	SYSTEM_LOGICAL_PROCESSOR_INFORMATION* buffer = 0;
+
+	GetLogicalProcessorInformation(0, &buffer_size);
+	buffer = (SYSTEM_LOGICAL_PROCESSOR_INFORMATION*) malloc(buffer_size);
+	GetLogicalProcessorInformation(&buffer[0], &buffer_size);
+
+	for (i = 0; i != buffer_size / sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION); ++i) {
+		if (buffer[i].Relationship == RelationCache && buffer[i].Cache.Level == 1) {
+			cache_line_size = buffer[i].Cache.LineSize;
+			break;
+		}
+	}
+
+	free(buffer);
+	return cache_line_size;
+#endif
+	return cache_line_size;
 }
